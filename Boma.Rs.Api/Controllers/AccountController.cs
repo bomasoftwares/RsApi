@@ -85,6 +85,7 @@ namespace Boma.Rs.Api.Controllers
         }
 
         // POST api/Account/Logout
+        [HttpPost]
         [Route("account/logOut")]
         public IHttpActionResult Logout()
         {
