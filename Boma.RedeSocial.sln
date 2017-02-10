@@ -5,6 +5,16 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Boma.Rs.Api", "Boma.Rs.Api\Boma.Rs.Api.csproj", "{7B4C3E41-14AE-4FAA-AA14-FBB9E19FEEE2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Boma.RedeSocial.Domain", "Boma.RedeSocial.Domain\Boma.RedeSocial.Domain.csproj", "{BB9B2080-B2BF-45F1-A295-21C0241FD98E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Boma.RedeSocial.Infrastructure", "Boma.RedeSocial.Infrastructure\Boma.RedeSocial.Infrastructure.csproj", "{EB370373-512B-45B7-8653-0084BB75BA58}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Boma.RedeSocial.ExternalServices", "Boma.RedeSocial.ExternalServices\Boma.RedeSocial.ExternalServices.csproj", "{106FEC35-43EA-4CB0-B443-61ACB0D5D3C5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Boma.RedeSocial.Crosscut", "Boma.RedeSocial.Crosscut\Boma.RedeSocial.Crosscut.csproj", "{E668EF2C-102A-4AC4-8EBC-2F9FE42A6F6E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Boma.RedeSocial.Infrastructure.Data", "Boma.RedeSocial.Infrastructure.Data\Boma.RedeSocial.Infrastructure.Data.csproj", "{085430D0-F654-46C6-931B-76B6B763D5A1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +25,26 @@ Global
 		{7B4C3E41-14AE-4FAA-AA14-FBB9E19FEEE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7B4C3E41-14AE-4FAA-AA14-FBB9E19FEEE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7B4C3E41-14AE-4FAA-AA14-FBB9E19FEEE2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB9B2080-B2BF-45F1-A295-21C0241FD98E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB9B2080-B2BF-45F1-A295-21C0241FD98E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB9B2080-B2BF-45F1-A295-21C0241FD98E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB9B2080-B2BF-45F1-A295-21C0241FD98E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB370373-512B-45B7-8653-0084BB75BA58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB370373-512B-45B7-8653-0084BB75BA58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB370373-512B-45B7-8653-0084BB75BA58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB370373-512B-45B7-8653-0084BB75BA58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{106FEC35-43EA-4CB0-B443-61ACB0D5D3C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{106FEC35-43EA-4CB0-B443-61ACB0D5D3C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{106FEC35-43EA-4CB0-B443-61ACB0D5D3C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{106FEC35-43EA-4CB0-B443-61ACB0D5D3C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E668EF2C-102A-4AC4-8EBC-2F9FE42A6F6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E668EF2C-102A-4AC4-8EBC-2F9FE42A6F6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E668EF2C-102A-4AC4-8EBC-2F9FE42A6F6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E668EF2C-102A-4AC4-8EBC-2F9FE42A6F6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{085430D0-F654-46C6-931B-76B6B763D5A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{085430D0-F654-46C6-931B-76B6B763D5A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{085430D0-F654-46C6-931B-76B6B763D5A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{085430D0-F654-46C6-931B-76B6B763D5A1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

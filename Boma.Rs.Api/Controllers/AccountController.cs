@@ -16,7 +16,7 @@ using System.Text;
 namespace Boma.Rs.Api.Controllers
 {
     [Authorize]
-    
+
     public class AccountController : ApiController
     {
         private const string LocalLoginProvider = "Local";
@@ -49,6 +49,7 @@ namespace Boma.Rs.Api.Controllers
 
         // GET api/Account/UserInfo
         [HostAuthentication(DefaultAuthenticationTypes.ExternalBearer)]
+        [HttpGet]
         [Route("account/userInfo")]
         public UserInfoViewModel GetUserInfo()
         {
@@ -112,7 +113,7 @@ namespace Boma.Rs.Api.Controllers
                   .Append("Atenciosamente,").AppendLine()
                   .Append("SexMove App");
 
-                await UserManager.SendEmailAsync(user.Id, "Recuperar senha",sB.ToString());
+                await UserManager.SendEmailAsync(user.Id, "Recuperar senha", sB.ToString());
                 return Ok();
             }
 
@@ -130,8 +131,8 @@ namespace Boma.Rs.Api.Controllers
             var user = await UserManager.FindByEmailAsync(model.Email);
             if (user == null)
                 return Ok();
-            
-            await UserManager.ResetPasswordAsync(user.Id,model.Code, model.Password);
+
+            await UserManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
 
             return Ok();
         }
