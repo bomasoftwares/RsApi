@@ -1,4 +1,6 @@
 ﻿using Boma.RedeSocial.Domain.Common.Entities;
+using Boma.RedeSocial.Domain.Common.Interfaces;
+using Boma.RedeSocial.Domain.Context.Interfaces;
 using Boma.RedeSocial.Domain.Interfaces;
 using Boma.RedeSocial.Domain.Interfaces.Entities;
 using Boma.RedeSocial.Domain.Interfaces.Repositories;

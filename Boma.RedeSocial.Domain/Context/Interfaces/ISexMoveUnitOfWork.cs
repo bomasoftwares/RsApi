@@ -1,4 +1,4 @@
-﻿namespace Boma.RedeSocial.Domain.Interfaces
+﻿namespace Boma.RedeSocial.Domain.Context.Interfaces
 {
     public interface ISexMoveUnitOfWork
     {

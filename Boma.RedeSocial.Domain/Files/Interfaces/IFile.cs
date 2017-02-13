@@ -1,4 +1,5 @@
-﻿namespace Boma.RedeSocial.Domain.Interfaces.Entities
+﻿namespace Boma.RedeSocial.Domain.Files.Interfaces
+
 {
     public interface IFile
     {

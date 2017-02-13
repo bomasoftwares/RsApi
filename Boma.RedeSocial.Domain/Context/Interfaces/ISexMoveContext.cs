@@ -1,4 +1,4 @@
-﻿namespace Boma.RedeSocial.Domain.Interfaces.Entities
+﻿namespace Boma.RedeSocial.Domain.Context.Interfaces
 {
     public interface ISexMoveContext
     {

@@ -1,0 +1,7 @@
+C:\git\arthur\RsApi\Boma.RedeSocial.AppService\bin\Debug\Boma.RedeSocial.AppService.dll
+C:\git\arthur\RsApi\Boma.RedeSocial.AppService\bin\Debug\Boma.RedeSocial.AppService.pdb
+C:\git\arthur\RsApi\Boma.RedeSocial.AppService\bin\Debug\Boma.RedeSocial.Domain.dll
+C:\git\arthur\RsApi\Boma.RedeSocial.AppService\bin\Debug\Boma.RedeSocial.Domain.pdb
+C:\git\arthur\RsApi\Boma.RedeSocial.AppService\obj\Debug\Boma.RedeSocial.AppService.csprojResolveAssemblyReference.cache
+C:\git\arthur\RsApi\Boma.RedeSocial.AppService\obj\Debug\Boma.RedeSocial.AppService.dll
+C:\git\arthur\RsApi\Boma.RedeSocial.AppService\obj\Debug\Boma.RedeSocial.AppService.pdb

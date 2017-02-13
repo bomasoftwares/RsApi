@@ -1,5 +1,5 @@
 ﻿using Boma.RedeSocial.Domain.Common.Enums;
-using Boma.RedeSocial.Domain.Files;
+using Boma.RedeSocial.Domain.Files.Entities;
 using System.Collections.Generic;
 
 namespace Boma.RedeSocial.Domain.Interfaces.Entities

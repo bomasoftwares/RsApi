@@ -10,3 +10,15 @@ C:\git\boma\RsApi\Boma.RedeSocial.Infrastructure.Data\bin\Debug\EntityFramework.
 C:\git\boma\RsApi\Boma.RedeSocial.Infrastructure.Data\obj\Debug\Boma.RedeSocial.Infrastructure.Data.csprojResolveAssemblyReference.cache
 C:\git\boma\RsApi\Boma.RedeSocial.Infrastructure.Data\obj\Debug\Boma.RedeSocial.Infrastructure.Data.dll
 C:\git\boma\RsApi\Boma.RedeSocial.Infrastructure.Data\obj\Debug\Boma.RedeSocial.Infrastructure.Data.pdb
+C:\git\arthur\RsApi\Boma.RedeSocial.Infrastructure.Data\bin\Debug\Boma.RedeSocial.Infrastructure.Data.dll.config
+C:\git\arthur\RsApi\Boma.RedeSocial.Infrastructure.Data\bin\Debug\Boma.RedeSocial.Infrastructure.Data.dll
+C:\git\arthur\RsApi\Boma.RedeSocial.Infrastructure.Data\bin\Debug\Boma.RedeSocial.Infrastructure.Data.pdb
+C:\git\arthur\RsApi\Boma.RedeSocial.Infrastructure.Data\bin\Debug\Boma.RedeSocial.Domain.dll
+C:\git\arthur\RsApi\Boma.RedeSocial.Infrastructure.Data\bin\Debug\EntityFramework.dll
+C:\git\arthur\RsApi\Boma.RedeSocial.Infrastructure.Data\bin\Debug\EntityFramework.SqlServer.dll
+C:\git\arthur\RsApi\Boma.RedeSocial.Infrastructure.Data\bin\Debug\Boma.RedeSocial.Domain.pdb
+C:\git\arthur\RsApi\Boma.RedeSocial.Infrastructure.Data\bin\Debug\EntityFramework.xml
+C:\git\arthur\RsApi\Boma.RedeSocial.Infrastructure.Data\bin\Debug\EntityFramework.SqlServer.xml
+C:\git\arthur\RsApi\Boma.RedeSocial.Infrastructure.Data\obj\Debug\Boma.RedeSocial.Infrastructure.Data.csprojResolveAssemblyReference.cache
+C:\git\arthur\RsApi\Boma.RedeSocial.Infrastructure.Data\obj\Debug\Boma.RedeSocial.Infrastructure.Data.dll
+C:\git\arthur\RsApi\Boma.RedeSocial.Infrastructure.Data\obj\Debug\Boma.RedeSocial.Infrastructure.Data.pdb

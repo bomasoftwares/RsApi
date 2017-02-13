@@ -1,4 +1,4 @@
-﻿namespace Boma.RedeSocial.Domain.Files
+﻿namespace Boma.RedeSocial.Domain.Files.Entities
 {
     public class Photo: File
     {

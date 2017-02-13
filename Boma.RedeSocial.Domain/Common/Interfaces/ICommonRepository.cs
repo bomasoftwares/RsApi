@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace Boma.RedeSocial.Domain.Interfaces.Repositories
+namespace Boma.RedeSocial.Domain.Common.Interfaces
 {
     public interface ICommonRepository<T>
         where T: class

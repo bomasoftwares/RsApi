@@ -4,7 +4,7 @@ using Boma.RedeSocial.Domain.Subscriptions.Financials;
 using Boma.RedeSocial.Domain.Users;
 using System;
 
-namespace Boma.RedeSocial.Domain.Subscriptions
+namespace Boma.RedeSocial.Domain.Subscriptions.Entities
 {
     public class Subscription: DomainEntityBase, ISubscription
     {

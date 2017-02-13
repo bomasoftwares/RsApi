@@ -1,6 +1,6 @@
 ﻿using Boma.RedeSocial.Domain.Common.Entities;
 using Boma.RedeSocial.Domain.Common.Enums;
-using Boma.RedeSocial.Domain.Files;
+using Boma.RedeSocial.Domain.Files.Entities;
 using System.Collections.Generic;
 
 namespace Boma.RedeSocial.Domain.Users
@@ -15,6 +15,11 @@ namespace Boma.RedeSocial.Domain.Users
 
         public List<Photo> Photos { get; set; }
         public List<Video> Videos { get; set; }
+
+        public User()
+        {
+
+        }
 
         public User(string userName, string email, AccountType accountType, SubscriptionType subscriptionType)
         {

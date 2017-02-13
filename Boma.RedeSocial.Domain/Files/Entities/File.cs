@@ -1,7 +1,7 @@
 ﻿using Boma.RedeSocial.Domain.Common.Entities;
-using Boma.RedeSocial.Domain.Interfaces.Entities;
+using Boma.RedeSocial.Domain.Files.Interfaces;
 
-namespace Boma.RedeSocial.Domain.Files
+namespace Boma.RedeSocial.Domain.Files.Entities
 {
     public abstract class File : DomainFileBase, IFile
     {

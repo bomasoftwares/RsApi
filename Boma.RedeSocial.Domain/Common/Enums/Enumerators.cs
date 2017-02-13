@@ -18,4 +18,10 @@
         Cpf = 0,
         Cnpj = 1
     }
+
+    public enum ConfigurationType
+    {
+        General = 0,
+        User = 1
+    }
 }

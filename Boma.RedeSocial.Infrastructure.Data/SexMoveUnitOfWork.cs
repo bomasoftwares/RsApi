@@ -1,5 +1,8 @@
-﻿using Boma.RedeSocial.Domain.Interfaces;
+﻿using Boma.RedeSocial.Domain.Context.Interfaces;
+using Boma.RedeSocial.Domain.Interfaces;
 using Boma.RedeSocial.Domain.Interfaces.Entities;
+using Boma.RedeSocial.Domain.Users;
+using Boma.RedeSocial.Infrastructure.Data.EntityFramework.Identity.DbModel;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -30,6 +33,14 @@ namespace Boma.RedeSocial.Infrastructure.Data
         }
 
         public void Commit() => SaveChanges();
-        
+
+        #region DbSets
+
+        public DbSet<User> Users { get; set; }
+        public DbSet<AspNetUserDbModel> AspNetUsers { get; set; }
+
+
+        #endregion
+
     }
 }
