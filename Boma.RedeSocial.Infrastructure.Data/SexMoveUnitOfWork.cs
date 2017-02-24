@@ -1,8 +1,5 @@
 ﻿using Boma.RedeSocial.Domain.Context.Interfaces;
-using Boma.RedeSocial.Domain.Interfaces;
-using Boma.RedeSocial.Domain.Interfaces.Entities;
-using Boma.RedeSocial.Domain.Users;
-using Boma.RedeSocial.Infrastructure.Data.EntityFramework.Identity.DbModel;
+using Boma.RedeSocial.Domain.Users.Entities;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -29,16 +26,15 @@ namespace Boma.RedeSocial.Infrastructure.Data
 
         private void CreateAudit(IEnumerable<DbEntityEntry> entries)
         {
-            throw new NotImplementedException();
+            // Implementar 
         }
 
         public void Commit() => SaveChanges();
 
-        #region DbSets
+        #region DbSets 
 
+        public DbSet<AspNetUser> AspNetUsers { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<AspNetUserDbModel> AspNetUsers { get; set; }
-
 
         #endregion
 

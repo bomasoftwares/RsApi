@@ -1,5 +1,4 @@
-﻿using Boma.RedeSocial.Domain.Context.Interfaces;
-using Boma.RedeSocial.Domain.Users;
+﻿using Boma.RedeSocial.Domain.Users.Entities;
 using System;
 
 namespace Boma.RedeSocial.Domain.Interfaces.Repositories

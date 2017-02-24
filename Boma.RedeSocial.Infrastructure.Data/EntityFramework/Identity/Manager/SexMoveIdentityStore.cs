@@ -1,0 +1,141 @@
+﻿using Boma.RedeSocial.Domain.Users.Entities;
+using Microsoft.AspNet.Identity.EntityFramework;
+using System;
+using System.Data.Entity;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Threading.Tasks;
+
+namespace Boma.RedeSocial.Infrastructure.Data.EntityFramework.Identity.Manager
+{
+    public class SexMoveIdentityStore : ISexMoveIdentityStore
+    {
+        private AspNetUser User { get; set; }
+        UserStore<IdentityUser> userStore = new UserStore<IdentityUser>(new SexMoveIdentityContext());
+        public SexMoveIdentityStore()
+        {
+        }
+
+
+        public Task CreateAsync(AspNetUser user)
+        {
+            var context = userStore.Context as SexMoveIdentityContext;
+            User = user;
+            SetPasswordHashAsync(user, user.PasswordHash);
+            
+            context.Users.Add(User);
+            context.Configuration.ValidateOnSaveEnabled = false;
+            return context.SaveChangesAsync();
+        }
+
+        public Task DeleteAsync(AspNetUser user)
+        {
+            var context = userStore.Context as SexMoveIdentityContext;
+            context.Users.Remove(user);
+            context.Configuration.ValidateOnSaveEnabled = false;
+            return context.SaveChangesAsync();
+
+        }
+
+        public void Dispose() => userStore.Dispose();
+
+        public Task<AspNetUser> FindByIdAsync(string userId)
+        {
+            var context = userStore.Context as SexMoveIdentityContext;
+            return context.Users.Where(u => u.Id.ToLower() == userId.ToLower()).FirstOrDefaultAsync();
+        }
+
+        public Task<AspNetUser> FindByNameAsync(string userName)
+        {
+            var context = userStore.Context as SexMoveIdentityContext;
+            return context.Users.Where(u => u.UserName.ToLower() == userName.ToLower()).FirstOrDefaultAsync();
+        }
+
+        public Task<bool> HasPasswordAsync(AspNetUser user)
+        {
+            var identityUser = ToIdentityUser(user);
+            var task = userStore.HasPasswordAsync(identityUser);
+            SetApplicationUser(user, identityUser);
+            return task;
+        }
+
+        public Task<string> GetPasswordHashAsync(AspNetUser user)
+        {
+            byte[] salt;
+            byte[] buffer2;
+            if (user.PasswordHash == null)
+            {
+                throw new ArgumentNullException("password");
+            }
+            using (Rfc2898DeriveBytes bytes = new Rfc2898DeriveBytes(user.PasswordHash, 0x10, 0x3e8))
+            {
+                salt = bytes.Salt;
+                buffer2 = bytes.GetBytes(0x20);
+            }
+            byte[] dst = new byte[0x31];
+            Buffer.BlockCopy(salt, 0, dst, 1, 0x10);
+            Buffer.BlockCopy(buffer2, 0, dst, 0x11, 0x20);
+            var passwordHash = Convert.ToBase64String(dst);
+            return Task.FromResult(passwordHash);
+        }
+
+        public Task SetPasswordHashAsync(AspNetUser user, string passwordHash)
+        {
+            var identityUser = ToIdentityUser(user);
+            var task = GetPasswordHashAsync(user);
+            identityUser.PasswordHash = task.Result;
+            SetApplicationUser(user, identityUser);
+            return task;
+        }
+
+        public Task<string> GetSecurityStampAsync(AspNetUser user)
+        {
+            var identityUser = ToIdentityUser(user);
+            var task = userStore.GetSecurityStampAsync(identityUser);
+            SetApplicationUser(user, identityUser);
+            return task;
+
+        }
+
+        public Task SetSecurityStampAsync(AspNetUser user, string stamp)
+        {
+            var identityUser = ToIdentityUser(user);
+            var task = userStore.SetSecurityStampAsync(identityUser, stamp);
+            SetApplicationUser(user, identityUser);
+            return task;
+
+        }
+
+        public Task UpdateAsync(AspNetUser user)
+        {
+            var context = userStore.Context as SexMoveIdentityContext;
+            context.Users.Attach(user);
+            context.Entry(user).State = EntityState.Modified;
+            context.Configuration.ValidateOnSaveEnabled = false;
+            return context.SaveChangesAsync();
+
+        }
+
+        private void SetApplicationUser(AspNetUser user, IdentityUser identityUser)
+        {
+            User.PasswordHash = identityUser.PasswordHash;
+            User.SecurityStamp = identityUser.SecurityStamp;
+            User.SetId(Guid.Parse(identityUser.Id));
+            User.UserName = identityUser.UserName;
+        }
+
+        private IdentityUser ToIdentityUser(AspNetUser user)
+        {
+            return new IdentityUser
+            {
+                Id = user.Id,
+                PasswordHash = user.PasswordHash,
+                SecurityStamp = user.SecurityStamp,
+                UserName = user.UserName
+            };
+        }
+
+    }
+
+    
+}

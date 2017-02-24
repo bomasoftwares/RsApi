@@ -2,9 +2,10 @@
 using Boma.RedeSocial.Domain.Interfaces.Entities;
 using Boma.RedeSocial.Domain.Subscriptions.Financials;
 using Boma.RedeSocial.Domain.Users;
+using Boma.RedeSocial.Domain.Users.Entities;
 using System;
 
-namespace Boma.RedeSocial.Domain.Subscriptions.Entities
+namespace Boma.RedeSocial.Domain.Subscriptions
 {
     public class Subscription: DomainEntityBase, ISubscription
     {

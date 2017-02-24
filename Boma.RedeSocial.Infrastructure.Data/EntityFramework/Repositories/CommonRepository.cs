@@ -1,9 +1,6 @@
 ﻿using Boma.RedeSocial.Domain.Common.Entities;
 using Boma.RedeSocial.Domain.Common.Interfaces;
 using Boma.RedeSocial.Domain.Context.Interfaces;
-using Boma.RedeSocial.Domain.Interfaces;
-using Boma.RedeSocial.Domain.Interfaces.Entities;
-using Boma.RedeSocial.Domain.Interfaces.Repositories;
 using System;
 using System.Data;
 using System.Data.Entity;
@@ -47,7 +44,10 @@ namespace Boma.RedeSocial.Infrastructure.Data.EntityFramework.Repositories
             CurrentSet().Remove(entity);
         }
 
-        public void Save(T entity) => CurrentSet().Add(entity);
+        public virtual void Save(T entity)
+        {
+            CurrentSet().Add(entity);
+        } 
         public void Update(T entity) => Uow.Entry(entity).State = EntityState.Modified;
 
     }

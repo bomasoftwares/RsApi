@@ -30,7 +30,24 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.0\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.EntityFramework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.1\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -41,34 +58,32 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\Entities\Address.cs" />
-    <Compile Include="Common\Entities\Configuration.cs" />
     <Compile Include="Common\Entities\Document.cs" />
     <Compile Include="Common\Entities\DomainEntityBase.cs" />
     <Compile Include="Common\Entities\DomainFileBase.cs" />
     <Compile Include="Common\Enums\Enumerators.cs" />
-    <Compile Include="Configurations\Entities\UserConfiguration.cs" />
     <Compile Include="Files\Entities\File.cs" />
     <Compile Include="Files\Entities\Photo.cs" />
     <Compile Include="Files\Entities\Video.cs" />
-    <Compile Include="Configurations\Interfaces\IConfiguration.cs" />
     <Compile Include="Files\Interfaces\IPhoto.cs" />
     <Compile Include="Files\Interfaces\IFile.cs" />
     <Compile Include="Context\Interfaces\ISexMoveContext.cs" />
     <Compile Include="Context\Interfaces\ISexMoveUnitOfWork.cs" />
     <Compile Include="Files\Interfaces\IVideo.cs" />
     <Compile Include="Subscriptions\Interfaces\ISubscription.cs" />
+    <Compile Include="Users\Entities\AspNetUser.cs" />
     <Compile Include="Users\Interfaces\IUser.cs" />
     <Compile Include="Common\Interfaces\ICommonRepository.cs" />
-    <Compile Include="Configurations\Interfaces\IConfigurationRepository.cs" />
     <Compile Include="Users\Interfaces\IUserAspNetRepository.cs" />
     <Compile Include="Users\Interfaces\IUserRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Subscriptions\Financials\FinancialInfo.cs" />
+    <Compile Include="Subscriptions\Financials\Entities\FinancialInfo.cs" />
     <Compile Include="Subscriptions\Entities\Subscription.cs" />
     <Compile Include="Users\Entities\User.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Context\Entities\" />
+    <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

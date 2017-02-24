@@ -27,6 +27,9 @@ namespace Boma.RedeSocial.Crosscut.AssertConcern
         public static void AssertArgumentTrue(bool boolValue, string message)
             => AssertArgumentTrue<DomainException>(boolValue, message);
 
+        public static void AssertArgumentNotGuidEmpty(Guid value, string message)
+            => AssertArgumentNotGuidEmpty<DomainException>(value, message);
+
         public static void AssertArgumentEquals<TException>(object object1, object object2, string message)
             where TException : Exception
         {
@@ -65,6 +68,11 @@ namespace Boma.RedeSocial.Crosscut.AssertConcern
         {
             if (!boolValue)
                 throw (TException)Activator.CreateInstance(typeof(TException), message);
+        }
+
+        public static void AssertArgumentNotGuidEmpty<TException>(Guid value, string message) where TException: Exception
+        {
+            if (value == Guid.Empty) throw (TException)Activator.CreateInstance(typeof(TException), message);
         }
        
     }

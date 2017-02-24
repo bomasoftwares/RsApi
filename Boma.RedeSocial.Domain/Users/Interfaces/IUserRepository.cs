@@ -1,8 +1,8 @@
 ﻿using Boma.RedeSocial.Domain.Common.Interfaces;
-using Boma.RedeSocial.Domain.Users;
+using Boma.RedeSocial.Domain.Users.Entities;
 using System;
 
-namespace Boma.RedeSocial.Domain.Interfaces.Repositories
+namespace Boma.RedeSocial.Domain.Users.Interfaces
 {
     public interface IUserRepository: ICommonRepository<User>
     {

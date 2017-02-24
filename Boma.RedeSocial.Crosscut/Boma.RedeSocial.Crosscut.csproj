@@ -41,6 +41,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssertConcern\AssertConcern.cs" />
+    <Compile Include="Auditing\Commands\AuditCommand.cs" />
+    <Compile Include="Auditing\Commands\AuditCreateCommand.cs" />
+    <Compile Include="Auditing\Commands\AuditErrorCommand.cs" />
     <Compile Include="Auditing\IBomaAuditing.cs" />
     <Compile Include="Exceptions\DomainException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

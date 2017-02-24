@@ -49,6 +49,7 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -58,8 +59,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EntityFramework\DbMap\Users\UserAspNetDbMap.cs" />
-    <Compile Include="EntityFramework\DbMap\Users\UserDetailDbMap.cs" />
-    <Compile Include="EntityFramework\Identity\DbModel\AspNetUserDbModel.cs" />
+    <Compile Include="EntityFramework\DbMap\Users\UserDbMap.cs" />
+    <Compile Include="EntityFramework\Identity\Manager\ISexMoveIdentityStore.cs" />
+    <Compile Include="EntityFramework\Identity\Manager\SexMoveIdentityContext.cs" />
+    <Compile Include="EntityFramework\Identity\Manager\SexMoveIdentityStore.cs" />
     <Compile Include="EntityFramework\Repositories\CommonRepository.cs" />
     <Compile Include="EntityFramework\Repositories\UserAspNetRepository.cs" />
     <Compile Include="EntityFramework\Repositories\UserRepository.cs" />
