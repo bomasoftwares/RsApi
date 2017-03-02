@@ -50,7 +50,7 @@ namespace Boma.Rs.Api
 
 
             // Enable the application to use bearer tokens to authenticate users
-            app.UseOAuthBearerTokens(OAuthOptions);
+            //app.UseOAuthBearerTokens(OAuthOptions);
 
             
 

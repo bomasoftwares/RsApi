@@ -26,6 +26,10 @@ namespace Boma.Rs.Api.Providers
 
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
+            try
+            {
+
+           
             context.Request.Headers.Add("Access-Control-Allow-Origin", new[] { "*" });
             var userManager = context.OwinContext.GetUserManager<ApplicationUserManager>();
 
@@ -37,15 +41,20 @@ namespace Boma.Rs.Api.Providers
                 return;
             }
 
-            ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(userManager,
-               OAuthDefaults.AuthenticationType);
-            ClaimsIdentity cookiesIdentity = await user.GenerateUserIdentityAsync(userManager,
-                CookieAuthenticationDefaults.AuthenticationType);
+                ClaimsIdentity claimsIdentity = CreateClaimIdentity(user, OAuthDefaults.AuthenticationType);
+                //ClaimsIdentity cookiesIdentity = user.GenerateUserIdentityAsync(userManager,
+                //CookieAuthenticationDefaults.AuthenticationType).Result;
 
             AuthenticationProperties properties = CreateProperties(user.UserName);
-            AuthenticationTicket ticket = new AuthenticationTicket(oAuthIdentity, properties);
+            AuthenticationTicket ticket = new AuthenticationTicket(claimsIdentity, properties);
             context.Validated(ticket);
-            context.Request.Context.Authentication.SignIn(cookiesIdentity);
+            //context.Request.Context.Authentication.SignIn(cookiesIdentity);
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
         }
 
         public override Task TokenEndpoint(OAuthTokenEndpointContext context)
@@ -91,6 +100,21 @@ namespace Boma.Rs.Api.Providers
                 { "userName", userName }
             };
             return new AuthenticationProperties(data);
+        }
+
+        public static ClaimsIdentity CreateClaimIdentity(ApplicationUser user, string authenticationType)
+        {
+            var identity = new ClaimsIdentity(authenticationType);
+            var claims = new List<Claim>()
+            {
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim("sexMove:id",user.Id.ToString()),
+                new Claim("sexMove:email",user.Email)
+            };
+
+            identity.AddClaims(claims);
+
+            return identity;
         }
     }
 }

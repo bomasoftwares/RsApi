@@ -3,3 +3,8 @@ C:\git\boma\RsApi\Boma.RedeSocial.Crosscut\bin\Debug\Boma.RedeSocial.Crosscut.pd
 C:\git\boma\RsApi\Boma.RedeSocial.Crosscut\obj\Debug\Boma.RedeSocial.Crosscut.dll
 C:\git\boma\RsApi\Boma.RedeSocial.Crosscut\obj\Debug\Boma.RedeSocial.Crosscut.pdb
 C:\git\boma\RsApi\Boma.RedeSocial.Crosscut\obj\Debug\Boma.RedeSocial.Crosscut.csprojResolveAssemblyReference.cache
+C:\git\arthur\RsApi\Boma.RedeSocial.Crosscut\obj\Debug\Boma.RedeSocial.Crosscut.csprojResolveAssemblyReference.cache
+C:\git\arthur\RsApi\Boma.RedeSocial.Crosscut\obj\Debug\Boma.RedeSocial.Crosscut.dll
+C:\git\arthur\RsApi\Boma.RedeSocial.Crosscut\obj\Debug\Boma.RedeSocial.Crosscut.pdb
+C:\git\arthur\RsApi\Boma.RedeSocial.Crosscut\bin\Debug\Boma.RedeSocial.Crosscut.dll
+C:\git\arthur\RsApi\Boma.RedeSocial.Crosscut\bin\Debug\Boma.RedeSocial.Crosscut.pdb

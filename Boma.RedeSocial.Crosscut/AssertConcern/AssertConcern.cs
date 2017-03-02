@@ -30,6 +30,9 @@ namespace Boma.RedeSocial.Crosscut.AssertConcern
         public static void AssertArgumentNotGuidEmpty(Guid value, string message)
             => AssertArgumentNotGuidEmpty<DomainException>(value, message);
 
+        public static void AssertArgumentEnumRange(int value,  int minimum, int max, string message)
+            => AssertArgumentEnumRange<DomainException>(value, minimum, max, message);
+
         public static void AssertArgumentEquals<TException>(object object1, object object2, string message)
             where TException : Exception
         {
@@ -74,6 +77,12 @@ namespace Boma.RedeSocial.Crosscut.AssertConcern
         {
             if (value == Guid.Empty) throw (TException)Activator.CreateInstance(typeof(TException), message);
         }
-       
+
+        public static void AssertArgumentEnumRange<TException>(int value, int minimum, int max, string message) where TException: Exception
+        {
+            if (value < minimum || value > max)
+                throw (TException)Activator.CreateInstance(typeof(TException), message);
+        }
+
     }
 }

@@ -4,6 +4,7 @@ using Boma.RedeSocial.AppService.Users.Interfaces;
 using Boma.RedeSocial.Crosscut.Auditing;
 using Boma.RedeSocial.Infrastructure.Data.EntityFramework.Identity.Manager;
 using System;
+using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace Boma.Rs.Api.Controllers
@@ -24,7 +25,7 @@ namespace Boma.Rs.Api.Controllers
         [Route("users")]
         public UserDetailDTO Get()
         {
-            return UserAppService.Get(Guid.Empty);
+            return UserAppService.Get(User.Identity.Name);
         }
 
         [AllowAnonymous]
@@ -37,6 +38,27 @@ namespace Boma.Rs.Api.Controllers
             return UserAppService.Create(command);
         }
 
-        
+        [HttpPut]
+        [Route("users/{UserId:guid}")]
+        public void Put([FromUri] Guid UserId, [FromBody] UpdateUserCommand command)
+        {
+            UserAppService.Update(UserId, command, User.Identity.Name);
+        }
+
+        [HttpPost]
+        [Route("account/forgotPassword")]
+        public async void ForgotPassword(ForgotPasswordCommand model)
+        {
+            if (ModelState.IsValid)
+            {
+                UserAppService.ForgotPassword(model);
+                
+                return Ok();
+            }
+
+            return BadRequest();
+        }
+
+
     }
 }

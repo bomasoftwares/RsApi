@@ -1,5 +1,6 @@
 ﻿using Boma.RedeSocial.Domain.Context.Interfaces;
 using Boma.RedeSocial.Domain.Users.Entities;
+using Microsoft.AspNet.Identity.EntityFramework;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -8,7 +9,7 @@ using System.Data.Entity.Infrastructure;
 
 namespace Boma.RedeSocial.Infrastructure.Data
 {
-    public class SexMoveUnitOfWork: DbContext, ISexMoveUnitOfWork
+    public class SexMoveUnitOfWork: IdentityDbContext, ISexMoveUnitOfWork
     {
         public SexMoveUnitOfWork(DbConnection connection, ISexMoveContext sexMoveContext): base(connection, false)
         {
@@ -34,7 +35,7 @@ namespace Boma.RedeSocial.Infrastructure.Data
         #region DbSets 
 
         public DbSet<AspNetUser> AspNetUsers { get; set; }
-        public DbSet<User> Users { get; set; }
+        public DbSet<User> ApplicationUser { get; set; }
 
         #endregion
 

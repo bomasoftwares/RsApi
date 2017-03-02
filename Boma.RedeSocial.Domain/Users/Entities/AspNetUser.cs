@@ -24,7 +24,7 @@ namespace Boma.RedeSocial.Domain.Users.Entities
         public void SetId(Guid id)
         {
             this.UserId = id;
-            this.Id = id.ToString();
+            this.Id = id.ToString().ToUpper();
         }
     }
 

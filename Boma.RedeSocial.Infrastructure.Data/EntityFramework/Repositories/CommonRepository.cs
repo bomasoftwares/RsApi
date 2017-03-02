@@ -47,7 +47,7 @@ namespace Boma.RedeSocial.Infrastructure.Data.EntityFramework.Repositories
         public virtual void Save(T entity)
         {
             CurrentSet().Add(entity);
-        } 
+        }
         public void Update(T entity) => Uow.Entry(entity).State = EntityState.Modified;
 
     }

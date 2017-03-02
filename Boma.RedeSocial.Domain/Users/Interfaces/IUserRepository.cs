@@ -7,5 +7,6 @@ namespace Boma.RedeSocial.Domain.Users.Interfaces
     public interface IUserRepository: ICommonRepository<User>
     {
         User Get(Guid id);
+        User GetByEmail(string email);
     }
 }
