@@ -1,6 +1,7 @@
 ﻿using System.Web.Http;
 using Microsoft.Owin.Security.OAuth;
 using System.Net.Http.Headers;
+using Boma.Rs.Api.StartupConfigurations.Filters;
 
 namespace Boma.Rs.Api
 {
@@ -12,6 +13,8 @@ namespace Boma.Rs.Api
             // Configure Web API to use only bearer token authentication.
             config.SuppressDefaultHostAuthentication();
             config.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
+            config.Filters.Add(new CustomErrorFilter());
+
 
             config.Formatters.JsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/json"));
 

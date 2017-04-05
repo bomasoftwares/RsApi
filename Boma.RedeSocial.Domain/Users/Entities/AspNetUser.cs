@@ -7,7 +7,9 @@ namespace Boma.RedeSocial.Domain.Users.Entities
     public class AspNetUser : IdentityUser, IUser
     {
         public Guid UserId { get; set; }
-        
+        public string PasswordResetKey { get; private set; }
+
+
         public virtual User User { get; set; }
 
         public AspNetUser()
@@ -26,8 +28,13 @@ namespace Boma.RedeSocial.Domain.Users.Entities
             this.UserId = id;
             this.Id = id.ToString().ToUpper();
         }
+
+        public void SetPasswordResetKey(string key)
+        { 
+            PasswordResetKey = key;
+        }
+
+        internal string ResetPassword(AspNetUser identityUser)
+            => Guid.NewGuid().ToString().ToUpper().Replace("-","");
     }
-
-
-
 }

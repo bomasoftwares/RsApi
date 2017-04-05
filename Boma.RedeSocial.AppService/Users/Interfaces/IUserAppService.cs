@@ -11,5 +11,7 @@ namespace Boma.RedeSocial.AppService.Users.Interfaces
         Guid Create(NewUserCommand command);
         void Update(Guid userId, UpdateUserCommand command, string userName);
         void ForgotPassword(ForgotPasswordCommand command);
+        string ResetPassword(ResetPasswordCommand command);
+        UserProfileDto GetUserProfile(Guid userId);
     }
 }

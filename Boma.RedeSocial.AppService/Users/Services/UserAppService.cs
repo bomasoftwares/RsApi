@@ -8,10 +8,10 @@ using Boma.RedeSocial.AppService.Users.Commands;
 using Boma.RedeSocial.Domain.Users.Entities;
 using Boma.RedeSocial.Infrastructure.Data.EntityFramework.Identity.Manager;
 using Boma.RedeSocial.Crosscut.Auditing;
-using Boma.RedeSocial.Crosscut.Auditing.Commands;
 using Boma.RedeSocial.Domain.Context.Interfaces;
-using System.Linq;
 using Boma.RedeSocial.Domain.Common.Enums;
+using Boma.RedeSocial.Crosscut.Services;
+using System.Text;
 
 namespace Boma.RedeSocial.AppService.Users.Services
 {
@@ -22,14 +22,17 @@ namespace Boma.RedeSocial.AppService.Users.Services
         private ISexMoveIdentityStore UserIdentityStore { get; }
         private IBomaAuditing SexMoveAuditing { get; set; }
         private ISexMoveUnitOfWork Uow { get; set; }
+        private IUserService UserService { get; set; }
 
-        public UserAppService(IUserRepository userRepository, IUserAspNetRepository userAspNetRepository, ISexMoveIdentityStore userIdentityStore, IBomaAuditing sexMoveAuditing, ISexMoveUnitOfWork uow)
+        public UserAppService(IUserRepository userRepository, IUserAspNetRepository userAspNetRepository, ISexMoveIdentityStore userIdentityStore, IBomaAuditing sexMoveAuditing, 
+                ISexMoveUnitOfWork uow, IUserService userService)
         {
             UserRepository = userRepository;
             UserAspNetRepository = userAspNetRepository;
             UserIdentityStore = userIdentityStore;
             SexMoveAuditing = sexMoveAuditing;
             Uow = uow;
+            UserService = userService;
         }
 
         public UserDetailDTO Get(Guid id)
@@ -48,7 +51,7 @@ namespace Boma.RedeSocial.AppService.Users.Services
                 UserName = aspNetUser.UserName,
                 AccountType = (int)user.AccountType,
                 AccountTypeDescription = user.AccountType.ToString(),
-                UrlProfilePhoto = user.ProfilePhoto.Url
+                UrlProfilePhoto = user.UrlProfilePhoto
             };
         }
 
@@ -77,12 +80,15 @@ namespace Boma.RedeSocial.AppService.Users.Services
         {
             try
             {
+                var existUser = UserRepository.GetByEmail(command.Email);
+                AssertConcern.AssertArgumentTrue(existUser == null, "Usuário já cadastrado");
+
                 var domainUser = new User()
                 {
                     Id = Guid.NewGuid(),
                     UserName = command.UserName,
                     Email = command.Email,
-                    AccountType = Domain.Common.Enums.AccountType.Normal
+                    AccountType = AccountType.Normal
                 };
 
                 UserRepository.Save(domainUser);
@@ -105,7 +111,6 @@ namespace Boma.RedeSocial.AppService.Users.Services
 
                 UserIdentityStore.CreateAsync(aspNetUser).Wait();
 
-
                 // SexMoveAuditing.Audit(new AuditCreateCommand("Usuário criado", new { User = domainUser, AspNetUser = aspNetUser }));
 
                 return domainUser.Id;
@@ -113,6 +118,7 @@ namespace Boma.RedeSocial.AppService.Users.Services
             catch (Exception ex)
             {
                 // SexMoveAuditing.AuditError(new AuditErrorCommand(ex.Message, ex));
+                
                 throw;
             }
             
@@ -146,21 +152,71 @@ namespace Boma.RedeSocial.AppService.Users.Services
         public void ForgotPassword(ForgotPasswordCommand command)
         {
             var user = UserRepository.GetByEmail(command.Email);
+            AssertConcern.AssertArgumentNotNull(user, "Usuário não encontrado");
 
-            string code = UserIdentityStore.GeneratePasswordResetTokenAsync(user.Id);
+            var identityUser = UserAspNetRepository.GetIdentityUser(user.Id);
+            AssertConcern.AssertArgumentNotNull(identityUser, "Usuário Identity não encontrado");
+
+            var passwordKey = UserService.GeneratePasswordKey(identityUser);
+            UserAspNetRepository.SavePasswordKey(identityUser.UserId, passwordKey);
 
             var sB = new StringBuilder();
 
-            sB.Append("Olá,").AppendLine()
-              .Append(" Para recuperar a senha utilize esse código: \n").AppendLine()
-              .Append($"<b> {code} </b> ").AppendLine()
-              .Append("\n").AppendLine()
-              .Append("Atenciosamente,").AppendLine()
-              .Append("SexMove App");
+            sB.Append("Olá, <br/>").AppendLine()
+              .Append(" Para recuperar a senha utilize esse código: <br/>").AppendLine()
+              .Append($"<p> <strong>{passwordKey}</strong> </p> ").AppendLine()
+              .Append("<br/>").AppendLine()
+              .Append("Atenciosamente, <br/>").AppendLine()
+              .Append("Equipe SexMove");
 
-            await UserManager.SendEmailAsync(user.Id, "Recuperar senha", sB.ToString());
+            var emailService = new EmailService();
+            emailService.SendEmail(sB.ToString(), "SexMove - Recuperar senha", identityUser.Email);
+
+            Uow.Commit();
         }
 
-        
+        public string ResetPassword(ResetPasswordCommand command)
+        {
+            var user = UserAspNetRepository.GetIdentityUserByEmail(command.Email);
+
+            AssertConcern.AssertArgumentNotNull(user, "Usuário não encontrado");
+            AssertConcern.AssertArgumentEquals(user.PasswordResetKey,command.PasswordResetKey, "Código inválido para resetar senha");
+
+            var newPassword = $"{DateTime.UtcNow:MMyy}user@#!{DateTime.UtcNow:yydd}"; // Nova senha para acesso''
+            
+            UserIdentityStore.SetIdentityStoreUser(user);
+            UserIdentityStore.SetPasswordHashAsync(user, newPassword).Wait();
+            user.SetPasswordResetKey(null);
+            UserAspNetRepository.Update(user);
+            Uow.Commit();
+            return newPassword;
+        }
+
+        public UserProfileDto GetUserProfile(Guid userId)
+        {
+            return new UserProfileDto()
+            {
+                Id = userId,
+                Genre = 0,
+                GenreDescription = "Man",
+                MaritalStatus = 0,
+                MaritalStatusDescription = "Single",
+                ZipCode = "23070400",
+                PeopleOne = new PeopleProfileDto()
+                {
+                    BirthDate = DateTime.Now,
+                    Name = "Batman",
+                    EyesColor = 0,
+                    EyesColorDescription = "Black",
+                    HairColor = 1,
+                    HairColorDescription = "Black",
+                    Height = 183,
+                    Weight = 80,
+                    ASmoker = false,
+                    ADrinker = true
+                },
+                Summary = @" Uma pessoa que gosta de se aventurar na vida"
+            };
+        }
     }
 }

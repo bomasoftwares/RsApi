@@ -7,6 +7,8 @@ using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
 using Boma.Rs.Api.Models;
+using Boma.RedeSocial.Infrastructure.Data.EntityFramework.Identity.Manager;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace Boma.Rs.Api.Providers
 {
@@ -29,30 +31,29 @@ namespace Boma.Rs.Api.Providers
             try
             {
 
-           
-            context.Request.Headers.Add("Access-Control-Allow-Origin", new[] { "*" });
-            var userManager = context.OwinContext.GetUserManager<ApplicationUserManager>();
 
-            ApplicationUser user = await userManager.FindAsync(context.UserName, context.Password);
+                context.Request.Headers.Add("Access-Control-Allow-Origin", new[] { "*" });
+                var userManager = new SexMoveIdentityStore();
 
-            if (user == null)
-            {
-                context.SetError("invalid_grant", "The user name or password is incorrect.");
-                return;
-            }
+                var identityUser = userManager.GetIdentityUserByUserNameAndPassword(context.UserName, context.Password);
 
-                ClaimsIdentity claimsIdentity = CreateClaimIdentity(user, OAuthDefaults.AuthenticationType);
-                //ClaimsIdentity cookiesIdentity = user.GenerateUserIdentityAsync(userManager,
-                //CookieAuthenticationDefaults.AuthenticationType).Result;
 
-            AuthenticationProperties properties = CreateProperties(user.UserName);
-            AuthenticationTicket ticket = new AuthenticationTicket(claimsIdentity, properties);
-            context.Validated(ticket);
-            //context.Request.Context.Authentication.SignIn(cookiesIdentity);
+                if (identityUser == null)
+                {
+                    context.SetError("invalid_grant", "The user name or password is incorrect.");
+                    return;
+                }
+
+                var user = ToApplicationUser(identityUser);
+                var claimsIdentity = CreateClaimIdentity(user, OAuthDefaults.AuthenticationType);
+                var properties = CreateProperties(user.UserName);
+                var ticket = new AuthenticationTicket(claimsIdentity, properties);
+                context.Validated(ticket);
+                
             }
             catch (Exception ex)
             {
-
+                
                 throw;
             }
         }
@@ -116,5 +117,27 @@ namespace Boma.Rs.Api.Providers
 
             return identity;
         }
+
+        public ApplicationUser ToApplicationUser(IdentityUser user)
+        {
+            return new ApplicationUser()
+            {
+                Id = user.Id,
+                Email = user.Email,
+                AccessFailedCount = user.AccessFailedCount,
+                EmailConfirmed = user.EmailConfirmed,
+                LockoutEnabled = user.LockoutEnabled,
+                LockoutEndDateUtc = user.LockoutEndDateUtc,
+                PasswordHash = user.PasswordHash,
+                PhoneNumber = user.PhoneNumber,
+                PhoneNumberConfirmed = user.PhoneNumberConfirmed,
+                SecurityStamp = user.SecurityStamp,
+                TwoFactorEnabled = user.TwoFactorEnabled,
+                UserName = user.UserName
+            };
+
+           
+        }
+
     }
 }

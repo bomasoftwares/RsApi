@@ -60,8 +60,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Users\Commands\ForgotPasswordCommand.cs" />
     <Compile Include="Users\Commands\NewUserCommand.cs" />
+    <Compile Include="Users\Commands\ResetPasswordCommand.cs" />
     <Compile Include="Users\Commands\UpdateUserCommand.cs" />
     <Compile Include="Users\DTOs\UserDetailDTO.cs" />
+    <Compile Include="Users\DTOs\UserProfileDto.cs" />
     <Compile Include="Users\Interfaces\IUserAppService.cs" />
     <Compile Include="Users\Services\UserAppService.cs" />
   </ItemGroup>

@@ -4,6 +4,7 @@ using Boma.RedeSocial.Crosscut.Auditing;
 using Boma.RedeSocial.Domain.Context.Interfaces;
 using Boma.RedeSocial.Domain.Interfaces.Repositories;
 using Boma.RedeSocial.Domain.Users.Interfaces;
+using Boma.RedeSocial.Domain.Users.Services;
 using Boma.RedeSocial.Infrastructure.Auditing;
 using Boma.RedeSocial.Infrastructure.Data;
 using Boma.RedeSocial.Infrastructure.Data.EntityFramework.Identity.Manager;
@@ -52,6 +53,7 @@ namespace Boma.Rs.Api
             container.Register<ISexMoveContext, SexMoveContext>(Lifestyle.Scoped);
             container.Register<IBomaAuditing, SexMoveAuditing>(Lifestyle.Scoped);
             container.Register<ISexMoveIdentityStore, SexMoveIdentityStore>(Lifestyle.Scoped);
+            container.Register<IUserService, UserService>(Lifestyle.Scoped);
 
 
             // This is an extension method from the integration package.
@@ -65,5 +67,6 @@ namespace Boma.Rs.Api
             
 
         }
+        
     }
 }

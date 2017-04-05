@@ -58,6 +58,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EntityFramework\DbMap\Photos\PhotoDbMap.cs" />
     <Compile Include="EntityFramework\DbMap\Users\UserAspNetDbMap.cs" />
     <Compile Include="EntityFramework\DbMap\Users\UserDbMap.cs" />
     <Compile Include="EntityFramework\Identity\Manager\ISexMoveIdentityStore.cs" />
@@ -66,10 +67,16 @@
     <Compile Include="EntityFramework\Repositories\CommonRepository.cs" />
     <Compile Include="EntityFramework\Repositories\UserAspNetRepository.cs" />
     <Compile Include="EntityFramework\Repositories\UserRepository.cs" />
+    <Compile Include="Migrations\ApplicationConfiguration.cs" />
+    <Compile Include="Migrations\IdentityConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SexMoveUnitOfWork.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Boma.RedeSocial.Crosscut\Boma.RedeSocial.Crosscut.csproj">
+      <Project>{E668EF2C-102A-4AC4-8EBC-2F9FE42A6F6E}</Project>
+      <Name>Boma.RedeSocial.Crosscut</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Boma.RedeSocial.Domain\Boma.RedeSocial.Domain.csproj">
       <Project>{BB9B2080-B2BF-45F1-A295-21C0241FD98E}</Project>
       <Name>Boma.RedeSocial.Domain</Name>

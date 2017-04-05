@@ -11,6 +11,11 @@ namespace Boma.RedeSocial.Infrastructure.Data
 {
     public class SexMoveUnitOfWork: IdentityDbContext, ISexMoveUnitOfWork
     {
+        //public SexMoveUnitOfWork()
+        //{
+
+        //}
+
         public SexMoveUnitOfWork(DbConnection connection, ISexMoveContext sexMoveContext): base(connection, false)
         {
             SexMoveContext = sexMoveContext;

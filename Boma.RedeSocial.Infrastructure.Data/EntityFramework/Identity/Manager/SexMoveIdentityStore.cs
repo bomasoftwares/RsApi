@@ -1,4 +1,6 @@
-﻿using Boma.RedeSocial.Domain.Users.Entities;
+﻿using Boma.RedeSocial.Crosscut.AssertConcern;
+using Boma.RedeSocial.Crosscut.Services;
+using Boma.RedeSocial.Domain.Users.Entities;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System;
 using System.Data.Entity;
@@ -79,10 +81,20 @@ namespace Boma.RedeSocial.Infrastructure.Data.EntityFramework.Identity.Manager
             return Task.FromResult(passwordHash);
         }
 
+        public Task<string> GetPasswordHashAsync(string password)
+        {
+            AssertConcern.AssertArgumentNotNull(password, "A senha não deve ser nula");
+            AssertConcern.AssertArgumentNotEmpty(password, "A senha não deve ser vazia");
+
+            
+            var passwordHash = SecurityService.Encrypt(password);
+            return Task.FromResult(passwordHash);
+        }
+
         public Task SetPasswordHashAsync(AspNetUser user, string passwordHash)
         {
             var identityUser = ToIdentityUser(user);
-            var task = GetPasswordHashAsync(user);
+            var task = GetPasswordHashAsync(passwordHash);
             identityUser.PasswordHash = task.Result;
             SetApplicationUser(user, identityUser);
             return task;
@@ -131,8 +143,33 @@ namespace Boma.RedeSocial.Infrastructure.Data.EntityFramework.Identity.Manager
                 Id = user.Id,
                 PasswordHash = user.PasswordHash,
                 SecurityStamp = user.SecurityStamp,
-                UserName = user.UserName
+                UserName = user.UserName,
+                Email = user.Email,
+                EmailConfirmed = user.EmailConfirmed
             };
+        }
+
+        public void SetIdentityStoreUser(AspNetUser user)
+        {
+            User = user;
+        }
+
+        public IdentityUser GetIdentityUserByUserNameAndPassword(string userName, string password)
+        {
+            var context = userStore.Context as SexMoveIdentityContext;
+            var passwordHash = GetPasswordHashAsync(password).Result;
+            var user = context.Users.FirstOrDefault(p => p.UserName == userName && p.PasswordHash == passwordHash);
+
+            if (user == null) return null;
+
+            return ToIdentityUser(user);
+        }
+
+        public AspNetUser GetAspNetUserByUserNameAndPassword(string userName, string password)
+        {
+            var context = userStore.Context as SexMoveIdentityContext;
+            var passwordHash = GetPasswordHashAsync(password).Result;
+            return context.Users.Where(u => u.UserName.ToLower() == userName.ToLower() && u.PasswordHash == passwordHash).FirstOrDefaultAsync().Result;
         }
 
     }

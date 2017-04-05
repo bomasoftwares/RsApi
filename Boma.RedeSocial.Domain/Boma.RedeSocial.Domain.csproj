@@ -80,6 +80,8 @@
     <Compile Include="Subscriptions\Financials\Entities\FinancialInfo.cs" />
     <Compile Include="Subscriptions\Entities\Subscription.cs" />
     <Compile Include="Users\Entities\User.cs" />
+    <Compile Include="Users\Interfaces\IUserService.cs" />
+    <Compile Include="Users\Services\UserService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

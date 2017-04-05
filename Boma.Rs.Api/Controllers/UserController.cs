@@ -4,7 +4,6 @@ using Boma.RedeSocial.AppService.Users.Interfaces;
 using Boma.RedeSocial.Crosscut.Auditing;
 using Boma.RedeSocial.Infrastructure.Data.EntityFramework.Identity.Manager;
 using System;
-using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace Boma.Rs.Api.Controllers
@@ -20,6 +19,8 @@ namespace Boma.Rs.Api.Controllers
             UserAppService = userAppService;
             SexMoveIdentityStore = sexMoveIdentityStore;
         }
+
+        #region Conta do usuário
 
         [HttpGet]
         [Route("users")]
@@ -45,19 +46,33 @@ namespace Boma.Rs.Api.Controllers
             UserAppService.Update(UserId, command, User.Identity.Name);
         }
 
+        [AllowAnonymous]
         [HttpPost]
-        [Route("account/forgotPassword")]
-        public async void ForgotPassword(ForgotPasswordCommand model)
+        [Route("users/forgotPassword")]
+        public void ForgotPassword(ForgotPasswordCommand command)
         {
             if (ModelState.IsValid)
-            {
-                UserAppService.ForgotPassword(model);
-                
-                return Ok();
-            }
-
-            return BadRequest();
+                UserAppService.ForgotPassword(command);
         }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("users/resetPassword")]
+        public string ResetPassword(ResetPasswordCommand command)
+        {
+            if (ModelState.IsValid)
+                return UserAppService.ResetPassword(command);
+
+            return null;
+        }
+
+        #endregion
+
+        [HttpGet]
+        [Route("users/{UserId:guid}/profile")]
+        public UserProfileDto GetUserProfile([FromUri] Guid userId)
+            => UserAppService.GetUserProfile(userId);
+
 
 
     }

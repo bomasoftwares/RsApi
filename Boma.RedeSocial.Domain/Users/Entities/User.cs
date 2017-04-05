@@ -15,9 +15,10 @@ namespace Boma.RedeSocial.Domain.Users.Entities
         public string UrlProfilePhoto { get; set; }
 
         
-        public virtual Photo ProfilePhoto { get; set; }
+        //public virtual Photo ProfilePhoto { get; set; }
         public virtual List<Photo> Photos { get; set; }
-        public virtual List<Video> Videos { get; set; }
+        
+        //public virtual List<Video> Videos { get; set; }
 
         public User()
         {

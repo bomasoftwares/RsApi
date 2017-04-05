@@ -17,6 +17,7 @@ namespace Boma.RedeSocial.Infrastructure.Data.EntityFramework.Identity.Manager
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
+            Database.SetInitializer<SexMoveIdentityContext>(null);
             modelBuilder.Configurations.Add(new UserAspNetDbMap());
             modelBuilder.Configurations.Add(new UserDbMap());
             base.OnModelCreating(modelBuilder);

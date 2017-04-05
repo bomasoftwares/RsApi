@@ -1,4 +1,5 @@
-﻿using System.Web;
+﻿using Boma.Rs.Api.StartupConfigurations.Filters;
+using System.Web;
 using System.Web.Mvc;
 
 namespace Boma.Rs.Api
