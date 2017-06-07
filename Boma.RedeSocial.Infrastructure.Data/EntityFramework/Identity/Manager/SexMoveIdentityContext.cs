@@ -1,4 +1,5 @@
 ﻿using Boma.RedeSocial.Domain.Users.Entities;
+using Boma.RedeSocial.Infrastructure.Data.EntityFramework.DbMap.Profiles;
 using Boma.RedeSocial.Infrastructure.Data.EntityFramework.DbMap.Users;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.Data.Entity;
@@ -19,7 +20,9 @@ namespace Boma.RedeSocial.Infrastructure.Data.EntityFramework.Identity.Manager
         {
             Database.SetInitializer<SexMoveIdentityContext>(null);
             modelBuilder.Configurations.Add(new UserAspNetDbMap());
-            modelBuilder.Configurations.Add(new UserDbMap());
+            
+            modelBuilder.Configurations.Add(new ProfileDbMap());
+            modelBuilder.Configurations.Add(new ProfilePeopleConfigurationDbMap());
             base.OnModelCreating(modelBuilder);
         }
 

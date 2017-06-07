@@ -6,7 +6,7 @@ using Boma.RedeSocial.Domain.Context.Interfaces;
 using Boma.RedeSocial.Domain.Users.Entities;
 using System.Data.Entity;
 
-namespace Boma.RedeSocial.Infrastructure.Data.EntityFramework.Repositories
+namespace Boma.RedeSocial.Infrastructure.Data.EntityFramework.Repositories.Users
 {
     public class UserAspNetRepository : IUserAspNetRepository
     {

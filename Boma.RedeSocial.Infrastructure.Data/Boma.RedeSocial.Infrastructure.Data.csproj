@@ -59,14 +59,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EntityFramework\DbMap\Photos\PhotoDbMap.cs" />
+    <Compile Include="EntityFramework\DbMap\Profiles\ProfileDbMap.cs" />
+    <Compile Include="EntityFramework\DbMap\Profiles\ProfilePeopleConfigurationDbMap.cs" />
     <Compile Include="EntityFramework\DbMap\Users\UserAspNetDbMap.cs" />
     <Compile Include="EntityFramework\DbMap\Users\UserDbMap.cs" />
     <Compile Include="EntityFramework\Identity\Manager\ISexMoveIdentityStore.cs" />
     <Compile Include="EntityFramework\Identity\Manager\SexMoveIdentityContext.cs" />
     <Compile Include="EntityFramework\Identity\Manager\SexMoveIdentityStore.cs" />
     <Compile Include="EntityFramework\Repositories\CommonRepository.cs" />
-    <Compile Include="EntityFramework\Repositories\UserAspNetRepository.cs" />
-    <Compile Include="EntityFramework\Repositories\UserRepository.cs" />
+    <Compile Include="EntityFramework\Repositories\Profiles\ProfilePeopleConfigurationRepository.cs" />
+    <Compile Include="EntityFramework\Repositories\Profiles\ProfileRepository.cs" />
+    <Compile Include="EntityFramework\Repositories\Users\UserAspNetRepository.cs" />
+    <Compile Include="EntityFramework\Repositories\Users\UserRepository.cs" />
     <Compile Include="Migrations\ApplicationConfiguration.cs" />
     <Compile Include="Migrations\IdentityConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

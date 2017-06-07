@@ -9,6 +9,7 @@ using Microsoft.Owin.Security.OAuth;
 using Boma.Rs.Api.Models;
 using Boma.RedeSocial.Infrastructure.Data.EntityFramework.Identity.Manager;
 using Microsoft.AspNet.Identity.EntityFramework;
+using System.Web;
 
 namespace Boma.Rs.Api.Providers
 {
@@ -30,8 +31,6 @@ namespace Boma.Rs.Api.Providers
         {
             try
             {
-
-
                 context.Request.Headers.Add("Access-Control-Allow-Origin", new[] { "*" });
                 var userManager = new SexMoveIdentityStore();
 
@@ -68,15 +67,19 @@ namespace Boma.Rs.Api.Providers
             return Task.FromResult<object>(null);
         }
 
-        public override Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
+        public override async Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
         {
-            // Resource owner password credentials does not provide a client ID.
-            if (context.ClientId == null)
-            {
-                context.Validated();
-            }
+            string id, secret;
 
-            return Task.FromResult<object>(null);
+            if (!context.TryGetBasicCredentials(out id, out secret))
+                context.TryGetFormCredentials(out id, out secret);
+
+            Guid clientId;
+            Guid.TryParse(id, out clientId);
+
+            context.OwinContext.Set("as:client_id", id);
+            context.OwinContext.Set("as:clientAllowedOrigin", true);
+            context.Validated();
         }
 
         public override Task ValidateClientRedirectUri(OAuthValidateClientRedirectUriContext context)
@@ -110,7 +113,8 @@ namespace Boma.Rs.Api.Providers
             {
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim("sexMove:id",user.Id.ToString()),
-                new Claim("sexMove:email",user.Email)
+                new Claim("sexMove:email",user.Email),
+                new Claim("sexMove:userName", user.UserName)
             };
 
             identity.AddClaims(claims);

@@ -1,15 +1,13 @@
 namespace Boma.RedeSocial.Infrastructure.Data.Migrations
 {
-    using System;
-    using System.Data.Entity;
     using System.Data.Entity.Migrations;
-    using System.Linq;
 
     internal sealed class IdentityConfiguration : DbMigrationsConfiguration<Boma.RedeSocial.Infrastructure.Data.EntityFramework.Identity.Manager.SexMoveIdentityContext>
     {
         public IdentityConfiguration()
         {
             AutomaticMigrationsEnabled = true;
+            AutomaticMigrationDataLossAllowed = true;
         }
 
         protected override void Seed(Boma.RedeSocial.Infrastructure.Data.EntityFramework.Identity.Manager.SexMoveIdentityContext context)

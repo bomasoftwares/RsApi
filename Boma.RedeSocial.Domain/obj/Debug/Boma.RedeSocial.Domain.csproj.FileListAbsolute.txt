@@ -26,3 +26,5 @@ C:\git\boma\RsApi\Boma.RedeSocial.Domain\bin\Debug\Microsoft.AspNet.Identity.Ent
 C:\git\boma\RsApi\Boma.RedeSocial.Domain\obj\Debug\Boma.RedeSocial.Domain.dll
 C:\git\boma\RsApi\Boma.RedeSocial.Domain\obj\Debug\Boma.RedeSocial.Domain.pdb
 C:\git\boma\RsApi\Boma.RedeSocial.Domain\obj\Debug\Boma.RedeSocial.Domain.csprojResolveAssemblyReference.cache
+C:\git\boma\RsApi\Boma.RedeSocial.Domain\bin\Debug\Boma.RedeSocial.Crosscut.dll
+C:\git\boma\RsApi\Boma.RedeSocial.Domain\bin\Debug\Boma.RedeSocial.Crosscut.pdb

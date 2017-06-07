@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using Boma.RedeSocial.Crosscut.AssertConcern;
 
 namespace Boma.RedeSocial.Domain.Users.Entities
 {
@@ -25,6 +26,7 @@ namespace Boma.RedeSocial.Domain.Users.Entities
 
         public void SetId(Guid id)
         {
+            AssertConcern.AssertArgumentNotGuidEmpty(id,"ID do Usuário não pode ser nulo");
             this.UserId = id;
             this.Id = id.ToString().ToUpper();
         }

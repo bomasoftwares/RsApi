@@ -70,6 +70,12 @@
     <Compile Include="Context\Interfaces\ISexMoveContext.cs" />
     <Compile Include="Context\Interfaces\ISexMoveUnitOfWork.cs" />
     <Compile Include="Files\Interfaces\IVideo.cs" />
+    <Compile Include="Profiles\Entities\Profile.cs" />
+    <Compile Include="Profiles\Entities\ProfilePeopleConfiguration.cs" />
+    <Compile Include="Profiles\Interfaces\IProfilePeopleConfiguration.cs" />
+    <Compile Include="Profiles\Interfaces\IProfilePeopleConfigurationRepository.cs" />
+    <Compile Include="Profiles\Interfaces\IProfileRepository.cs" />
+    <Compile Include="Profiles\Interfaces\IProfile.cs" />
     <Compile Include="Subscriptions\Interfaces\ISubscription.cs" />
     <Compile Include="Users\Entities\AspNetUser.cs" />
     <Compile Include="Users\Interfaces\IUser.cs" />
@@ -86,6 +92,12 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Boma.RedeSocial.Crosscut\Boma.RedeSocial.Crosscut.csproj">
+      <Project>{e668ef2c-102a-4ac4-8ebc-2f9fe42a6f6e}</Project>
+      <Name>Boma.RedeSocial.Crosscut</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,19 +1,16 @@
 namespace Boma.RedeSocial.Infrastructure.Data.Migrations
 {
-    using System;
-    using System.Data.Entity;
     using System.Data.Entity.Migrations;
-    using System.Linq;
 
-    internal sealed class ApplicationConfiguration : DbMigrationsConfiguration<Boma.RedeSocial.Infrastructure.Data.SexMoveUnitOfWork>
+    internal sealed class ApplicationConfiguration : DbMigrationsConfiguration<SexMoveUnitOfWork>
     {
         public ApplicationConfiguration()
         {
-            AutomaticMigrationsEnabled = true;
-            AutomaticMigrationDataLossAllowed = true;
+            AutomaticMigrationsEnabled = false;
+            AutomaticMigrationDataLossAllowed = false;
         }
 
-        protected override void Seed(Boma.RedeSocial.Infrastructure.Data.SexMoveUnitOfWork context)
+        protected override void Seed(SexMoveUnitOfWork context)
         {
             
         }

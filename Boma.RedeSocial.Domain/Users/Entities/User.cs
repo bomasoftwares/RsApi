@@ -1,12 +1,12 @@
 ﻿using Boma.RedeSocial.Domain.Common.Entities;
 using Boma.RedeSocial.Domain.Common.Enums;
 using Boma.RedeSocial.Domain.Files.Entities;
-using Microsoft.AspNet.Identity;
+using Boma.RedeSocial.Domain.Users.Interfaces;
 using System.Collections.Generic;
 
 namespace Boma.RedeSocial.Domain.Users.Entities
 {
-    public class User : DomainEntity
+    public class User : DomainEntity, IUser
     {
         public string UserName { get; set; }
         public string Email { get; set; }
@@ -14,11 +14,8 @@ namespace Boma.RedeSocial.Domain.Users.Entities
         public SubscriptionType SubscriptionType { get; set; }
         public string UrlProfilePhoto { get; set; }
 
-        
-        //public virtual Photo ProfilePhoto { get; set; }
         public virtual List<Photo> Photos { get; set; }
         
-        //public virtual List<Video> Videos { get; set; }
 
         public User()
         {

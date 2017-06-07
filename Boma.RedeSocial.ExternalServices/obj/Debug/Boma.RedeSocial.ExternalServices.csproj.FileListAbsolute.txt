@@ -2,4 +2,3 @@ C:\git\boma\RsApi\Boma.RedeSocial.ExternalServices\bin\Debug\Boma.RedeSocial.Ext
 C:\git\boma\RsApi\Boma.RedeSocial.ExternalServices\bin\Debug\Boma.RedeSocial.ExternalServices.pdb
 C:\git\boma\RsApi\Boma.RedeSocial.ExternalServices\obj\Debug\Boma.RedeSocial.ExternalServices.dll
 C:\git\boma\RsApi\Boma.RedeSocial.ExternalServices\obj\Debug\Boma.RedeSocial.ExternalServices.pdb
-C:\git\boma\RsApi\Boma.RedeSocial.ExternalServices\obj\Debug\Boma.RedeSocial.ExternalServices.csprojResolveAssemblyReference.cache

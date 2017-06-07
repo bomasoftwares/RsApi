@@ -3,24 +3,25 @@ using Boma.RedeSocial.AppService.Users.Services;
 using Boma.RedeSocial.Crosscut.Auditing;
 using Boma.RedeSocial.Domain.Context.Interfaces;
 using Boma.RedeSocial.Domain.Interfaces.Repositories;
+using Boma.RedeSocial.Domain.Profiles.Interfaces;
 using Boma.RedeSocial.Domain.Users.Interfaces;
 using Boma.RedeSocial.Domain.Users.Services;
 using Boma.RedeSocial.Infrastructure.Auditing;
 using Boma.RedeSocial.Infrastructure.Data;
 using Boma.RedeSocial.Infrastructure.Data.EntityFramework.Identity.Manager;
-using Boma.RedeSocial.Infrastructure.Data.EntityFramework.Repositories;
+using Boma.RedeSocial.Infrastructure.Data.EntityFramework.Repositories.Profiles;
+using Boma.RedeSocial.Infrastructure.Data.EntityFramework.Repositories.Users;
 using Boma.Rs.Api.Context;
-using Boma.Rs.Api.StartupConfigurations;
+using Boma.Rs.Api.Models;
 using SimpleInjector;
 using SimpleInjector.Extensions.ExecutionContextScoping;
+using SimpleInjector.Integration.Web;
+using SimpleInjector.Integration.Web.Mvc;
 using SimpleInjector.Integration.WebApi;
-using System;
-using System.Collections.Generic;
+using SimpleInjector.Lifestyles;
 using System.Configuration;
 using System.Data.Common;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
@@ -38,35 +39,28 @@ namespace Boma.Rs.Api
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-
             var container = new Container();
-            container.Options.DefaultScopedLifestyle = new WebApiRequestLifestyle();
-
-            // Register your types, for instance using the scoped lifestyle:
-            container.Register<DbConnection>(() => new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString), new ExecutionContextScopeLifestyle());
-            //container.Register(SexMoveContext.ResolveUser, scope);
-
-            container.Register<ISexMoveUnitOfWork, SexMoveUnitOfWork>(Lifestyle.Scoped);
-            container.Register<IUserRepository, UserRepository>(Lifestyle.Scoped);
-            container.Register<IUserAspNetRepository, UserAspNetRepository>(Lifestyle.Scoped);
-            container.Register<IUserAppService, UserAppService>(Lifestyle.Scoped);
-            container.Register<ISexMoveContext, SexMoveContext>(Lifestyle.Scoped);
-            container.Register<IBomaAuditing, SexMoveAuditing>(Lifestyle.Scoped);
-            container.Register<ISexMoveIdentityStore, SexMoveIdentityStore>(Lifestyle.Scoped);
-            container.Register<IUserService, UserService>(Lifestyle.Scoped);
+            container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
 
 
-            // This is an extension method from the integration package.
-            container.RegisterWebApiControllers(GlobalConfiguration.Configuration);
+            container.Register<DbConnection>(() => new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString), Lifestyle.Scoped);
+            container.Register<ISexMoveUnitOfWork, SexMoveUnitOfWork>();
+            container.Register<ISexMoveContext, SexMoveContext>();
+            container.Register<ISexMoveIdentityStore, SexMoveIdentityStore>();
+            container.Register<IBomaAuditing, SexMoveAuditing>();
 
-            container.Verify();
+            container.Register<IUserRepository, UserRepository>();
+            container.Register<IUserAspNetRepository, UserAspNetRepository>();
+            container.Register<IProfileRepository, ProfileRepository>();
+            container.Register<IProfilePeopleConfigurationRepository, ProfilePeopleConfigurationRepository>();
 
-            GlobalConfiguration.Configuration.DependencyResolver =
-                new SimpleInjectorWebApiDependencyResolver(container);
+            container.Register<IUserAppService, UserAppService>();
+            container.Register<IUserService, UserService>();
 
-            
+            //container.Verify();
 
+            GlobalConfiguration.Configuration.DependencyResolver = new SimpleInjectorWebApiDependencyResolver(container);
         }
-        
+
     }
 }

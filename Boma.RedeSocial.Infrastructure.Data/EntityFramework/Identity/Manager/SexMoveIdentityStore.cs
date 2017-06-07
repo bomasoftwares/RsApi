@@ -24,7 +24,10 @@ namespace Boma.RedeSocial.Infrastructure.Data.EntityFramework.Identity.Manager
             var context = userStore.Context as SexMoveIdentityContext;
             User = user;
             SetPasswordHashAsync(user, user.PasswordHash);
-            
+
+            context.Users.FirstOrDefault(a => a.Id == user.Id);
+
+
             context.Users.Add(User);
             context.Configuration.ValidateOnSaveEnabled = false;
             return context.SaveChangesAsync();

@@ -198,3 +198,5 @@ C:\git\boma\RsApi\Boma.Rs.Api\bin\System.Web.Http.Owin.xml
 C:\git\boma\RsApi\Boma.Rs.Api\obj\Debug\Boma.Rs.Api.csprojResolveAssemblyReference.cache
 C:\git\boma\RsApi\Boma.Rs.Api\obj\Debug\Boma.Rs.Api.dll
 C:\git\boma\RsApi\Boma.Rs.Api\obj\Debug\Boma.Rs.Api.pdb
+C:\git\boma\RsApi\Boma.Rs.Api\bin\SimpleInjector.Integration.Web.Mvc.dll
+C:\git\boma\RsApi\Boma.Rs.Api\bin\SimpleInjector.Integration.Web.Mvc.xml
