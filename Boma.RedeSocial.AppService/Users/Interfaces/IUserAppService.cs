@@ -21,7 +21,7 @@ namespace Boma.RedeSocial.AppService.Users.Interfaces
         UserProfileDto GetUserProfile(Guid userId);
 
         Guid InsertProfile(NewProfileCommand command);
-        void UpdateProfile(UpdateProfileCommand command);
+        void UpdateProfile(Guid UserId, UpdateProfileCommand command, string userName);
         ProfileDto GetProfile(Guid userId);
         void RemoveProfile(Guid userId);
 

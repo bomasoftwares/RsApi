@@ -10,6 +10,7 @@ using System;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.Controllers;
+using Boma.RedeSocial.Domain.Profiles.Entities;
 
 namespace Boma.Rs.Api.Controllers
 {
@@ -42,7 +43,7 @@ namespace Boma.Rs.Api.Controllers
         [Route("users")]
         public Guid Post([FromBody] NewUserCommand command)
         {
-            if (!ModelState.IsValid)  throw new Exception("Comando inválido para criação de usúario");
+            if (!ModelState.IsValid) throw new Exception("Comando inválido para criação de usúario");
             return UserAppService.Create(command);
         }
 
@@ -87,13 +88,21 @@ namespace Boma.Rs.Api.Controllers
         [Route("users/{userId:guid}/profile")]
         public Guid CreateProfile([FromBody]NewProfileCommand command, [FromUri]Guid userId)
         {
+            command.UserId = userId;
             if (!ModelState.IsValid)
                 throw new Exception("Comando inválido para criação de um perfil");
 
-            command.UserId = userId;
-
             return UserAppService.InsertProfile(command);
 
+        }
+
+        [HttpPut]
+        [Route("users/{UserId:guid}/profile")]
+        public void UpdateProfile([FromUri] Guid ProfileId, [FromBody] UpdateProfileCommand command)
+        {
+            if (!ModelState.IsValid)
+                throw new Exception("Comando inválido para atualização de um perfil");
+            UserAppService.UpdateProfile(ProfileId, command, User.Identity.Name);
         }
 
         #endregion

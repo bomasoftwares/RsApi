@@ -50,7 +50,7 @@ namespace Boma.RedeSocial.AppService.Users.Services
             Uow = uow;
             UserService = userService;
             SexMoveContext = sexMoveContext;
-            
+
         }
 
         #region Serviços de usuários
@@ -285,7 +285,7 @@ namespace Boma.RedeSocial.AppService.Users.Services
                     };
                     ProfilePeopleConfigurationRepository.Save(profile.PeopleOneConfiguration);
                 }
-                    
+
 
                 if (command.PeopleTwo != null)
                 {
@@ -301,7 +301,7 @@ namespace Boma.RedeSocial.AppService.Users.Services
                         Name = command.PeopleTwo.Name,
                         Weight = command.PeopleTwo.Weight,
                         ProfileId = profile.Id,
-                        
+
                     };
                     ProfilePeopleConfigurationRepository.Save(profile.PeopleTwoConfiguration);
                 }
@@ -315,7 +315,7 @@ namespace Boma.RedeSocial.AppService.Users.Services
 
 
                 return profile.Id;
-                
+
             }
             catch (Exception)
             {
@@ -325,9 +325,23 @@ namespace Boma.RedeSocial.AppService.Users.Services
 
         }
 
-        public void UpdateProfile(UpdateProfileCommand command)
+        public void UpdateProfile(Guid UserId, UpdateProfileCommand command, string userName)
         {
-            throw new NotImplementedException();
+            var profile = UserRepository.Get(UserId);
+
+            AssertConcern.AssertArgumentNotNull(profile, "Usuário inexistente");
+            AssertConcern.AssertArgumentTrue(profile.Id == UserId, "Usuário inválido para atualização");
+
+            if (command.AccountType != -1)
+            {
+                AssertConcern.AssertArgumentEnumRange((int)command.AccountType, (int)AccountType.Normal, (int)AccountType.Companion, "Opção de conta inválida");
+                profile.AccountType = (AccountType)command.AccountType.Value;
+            }
+
+            profile.UpdateBy = userName;
+            profile.UpdatedAt = DateTime.UtcNow;
+            UserRepository.Update(profile);
+            Uow.Commit();
         }
 
         public ProfileDto GetProfile(Guid userId)
