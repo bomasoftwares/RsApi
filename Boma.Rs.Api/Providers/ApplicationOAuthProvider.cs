@@ -32,6 +32,7 @@ namespace Boma.Rs.Api.Providers
             try
             {
                 context.Request.Headers.Add("Access-Control-Allow-Origin", new[] { "*" });
+                context.Response.Headers.Add("Access-Control-Allow-Origin", new[] { "*" });
                 var userManager = new SexMoveIdentityStore();
 
                 var identityUser = userManager.GetIdentityUserByUserNameAndPassword(context.UserName, context.Password);
