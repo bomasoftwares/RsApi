@@ -2,15 +2,9 @@
 using Boma.RedeSocial.AppService.Users.Commands.Profiles;
 using Boma.RedeSocial.AppService.Users.DTOs;
 using Boma.RedeSocial.AppService.Users.Interfaces;
-using Boma.RedeSocial.Crosscut.Auditing;
-using Boma.RedeSocial.Domain.Users.Entities;
-using Boma.RedeSocial.Domain.Users.Interfaces;
 using Boma.RedeSocial.Infrastructure.Data.EntityFramework.Identity.Manager;
 using System;
-using System.Web;
 using System.Web.Http;
-using System.Web.Http.Controllers;
-using Boma.RedeSocial.Domain.Profiles.Entities;
 
 namespace Boma.Rs.Api.Controllers
 {
@@ -24,11 +18,11 @@ namespace Boma.Rs.Api.Controllers
         {
             UserAppService = userAppService;
             SexMoveIdentityStore = sexMoveIdentityStore;
-
         }
 
         #region Conta do usuário
 
+        [Authorize]
         [HttpGet]
         [Route("users")]
         public UserDetailDTO Get()
@@ -76,7 +70,6 @@ namespace Boma.Rs.Api.Controllers
 
         #endregion
 
-
         #region Profile
 
         [HttpGet]
@@ -106,9 +99,5 @@ namespace Boma.Rs.Api.Controllers
         }
 
         #endregion
-
-
-
-
     }
 }

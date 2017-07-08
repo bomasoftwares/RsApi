@@ -59,7 +59,7 @@ namespace Boma.Rs.Api
             {
                 TokenEndpointPath = new PathString("/token"),
                 Provider = new ApplicationOAuthProvider(PublicClientId),
-                AuthorizeEndpointPath = new PathString("/account/authorize"),
+                AuthorizeEndpointPath = new PathString("/authorize"),
                 AccessTokenExpireTimeSpan = TimeSpan.FromDays(14),
                 AllowInsecureHttp = true,
 
