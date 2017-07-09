@@ -25,8 +25,12 @@ namespace Boma.RedeSocial.Infrastructure.Data.EntityFramework.Repositories.Users
         public User GetByEmail(string email)
                 => QueryWithoutDeleted().FirstOrDefault(a => a.Email == email);
 
-
         public void SetUserContext(string userName) => SexMoveContext.UserContext = userName;
+
+        public User GetByUserName(string userName) 
+            => QueryWithoutDeleted().FirstOrDefault(a => a.UserName == userName);
+
+
 
     }
 }

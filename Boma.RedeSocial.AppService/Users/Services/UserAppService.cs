@@ -108,20 +108,22 @@ namespace Boma.RedeSocial.AppService.Users.Services
         {
             try
             {
-                UserRepository.SetUserContext(command.UserName);
+                throw new Exception("jkljafçlkfjslkjdfalçksdjfçlsjdlçfkjaslksdjflkasjlkfjaslkdjfkajsdflçkajsdlkfjasdklj");
+                UserRepository.SetUserContext(command.NickName);
                 var existUser = UserRepository.GetByEmail(command.Email);
+                if (existUser == null) existUser = UserRepository.GetByUserName(command.NickName);
+
                 AssertConcern.AssertArgumentTrue(existUser == null, "Usuário já cadastrado");
 
                 var domainUser = new User()
                 {
                     Id = Guid.NewGuid(),
-                    UserName = command.UserName,
+                    UserName = command.NickName,
                     Email = command.Email,
                     AccountType = AccountType.Normal
                 };
 
                 UserRepository.Save(domainUser);
-
                 AssertConcern.AssertArgumentNotGuidEmpty(domainUser.Id, "Id do usuário de domínio criado incorretamente");
 
                 var aspNetUser = new AspNetUser()
@@ -139,7 +141,7 @@ namespace Boma.RedeSocial.AppService.Users.Services
                 Uow.Commit();
 
                 UserIdentityStore.CreateAsync(aspNetUser).Wait();
-
+                
                 // SexMoveAuditing.Audit(new AuditCreateCommand("Usuário criado", new { User = domainUser, AspNetUser = aspNetUser }));
 
                 return domainUser.Id;
@@ -148,7 +150,7 @@ namespace Boma.RedeSocial.AppService.Users.Services
             {
                 // SexMoveAuditing.AuditError(new AuditErrorCommand(ex.Message, ex));
 
-                throw;
+                throw ex;
             }
 
         }

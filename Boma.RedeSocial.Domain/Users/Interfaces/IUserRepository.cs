@@ -8,7 +8,7 @@ namespace Boma.RedeSocial.Domain.Users.Interfaces
     {
         User Get(Guid id);
         User GetByEmail(string email);
-
         void SetUserContext(string userName);
+        User GetByUserName(string userName);
     }
 }
