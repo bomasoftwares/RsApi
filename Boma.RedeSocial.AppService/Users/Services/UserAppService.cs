@@ -108,7 +108,6 @@ namespace Boma.RedeSocial.AppService.Users.Services
         {
             try
             {
-                throw new Exception("jkljafçlkfjslkjdfalçksdjfçlsjdlçfkjaslksdjflkasjlkfjaslkdjfkajsdflçkajsdlkfjasdklj");
                 UserRepository.SetUserContext(command.NickName);
                 var existUser = UserRepository.GetByEmail(command.Email);
                 if (existUser == null) existUser = UserRepository.GetByUserName(command.NickName);
