@@ -17,6 +17,7 @@ namespace Boma.RedeSocial.Crosscut.Services
             message.Body = body;
             message.IsBodyHtml = true;
             var smtpClient = new SmtpClient("smtp.gmail.com", 587);
+            smtpClient.UseDefaultCredentials = false;
             var credentials = new NetworkCredential("contato.boma@gmail.com", "boma@2016");
             smtpClient.Credentials = credentials;
             smtpClient.EnableSsl = true;
