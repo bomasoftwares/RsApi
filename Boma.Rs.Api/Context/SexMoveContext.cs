@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Configuration;
 using Boma.RedeSocial.AppService.Users.Interfaces;
+using System.Web;
 
 namespace Boma.Rs.Api.Context
 {
@@ -14,6 +15,7 @@ namespace Boma.Rs.Api.Context
         {
             Id = Guid.NewGuid();
             Connection = ResolveConnection();
+            UserContext = HttpContext.Current.Request.GetOwinContext().Authentication.User.Identity.Name;
         }
 
         public Guid Id { get; set; }

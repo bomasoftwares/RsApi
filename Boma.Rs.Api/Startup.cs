@@ -2,7 +2,6 @@
 using Boma.RedeSocial.AppService.Users.Services;
 using Boma.RedeSocial.Crosscut.Auditing;
 using Boma.RedeSocial.Domain.Context.Interfaces;
-using Boma.RedeSocial.Domain.Interfaces.Repositories;
 using Boma.RedeSocial.Domain.Profiles.Interfaces;
 using Boma.RedeSocial.Domain.Users.Interfaces;
 using Boma.RedeSocial.Domain.Users.Services;
@@ -12,13 +11,11 @@ using Boma.RedeSocial.Infrastructure.Data.EntityFramework.Identity.Manager;
 using Boma.RedeSocial.Infrastructure.Data.EntityFramework.Repositories.Profiles;
 using Boma.RedeSocial.Infrastructure.Data.EntityFramework.Repositories.Users;
 using Boma.Rs.Api.Context;
-using Microsoft.Owin;
 using Microsoft.Owin.Cors;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Owin;
 using SimpleInjector;
-using SimpleInjector.Integration.WebApi;
 using SimpleInjector.Lifestyles;
 using System.Configuration;
 using System.Data.Common;
@@ -39,38 +36,24 @@ namespace Boma.Rs.Api
             // Autenticação
             ConfigureAuth(app);
 
+            var container = new Container();
+            container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
+
+            container.Register<DbConnection>(() => new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString), Lifestyle.Scoped);
+            container.Register<ISexMoveContext, SexMoveContext>(Lifestyle.Singleton);
+            container.Register<ISexMoveUnitOfWork, SexMoveUnitOfWork>(Lifestyle.Singleton);
+
+            container.Register<ISexMoveIdentityStore, SexMoveIdentityStore>();
+            container.Register<IBomaAuditing, SexMoveAuditing>();
+            container.Register<IUserRepository, UserRepository>();
+            container.Register<IProfileRepository, ProfileRepository>();
+            container.Register<IProfilePeopleConfigurationRepository, ProfilePeopleConfigurationRepository>();
+
+            container.Register<IUserAppService, UserAppService>();
+            container.Register<IUserService, UserService>();
+
             // Cross-Domain
             app.UseCors(CorsOptions.AllowAll);
-
-
-            //var container = new Container();
-            //container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
-
-
-            //container.Register<DbConnection>(() => new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString), Lifestyle.Scoped);
-            //container.Register<ISexMoveUnitOfWork, SexMoveUnitOfWork>(Lifestyle.Scoped);
-            //container.Register<ISexMoveContext, SexMoveContext>(Lifestyle.Scoped);
-
-            //container.Register<ISexMoveIdentityStore, SexMoveIdentityStore>(Lifestyle.Scoped);
-            //container.Register<IBomaAuditing, SexMoveAuditing>(Lifestyle.Scoped);
-
-            //container.Register<IUserRepository, UserRepository>(Lifestyle.Scoped);
-            //container.Register<IUserAspNetRepository, UserAspNetRepository>(Lifestyle.Scoped);
-            //container.Register<IProfileRepository, ProfileRepository>(Lifestyle.Scoped);
-            //container.Register<IProfilePeopleConfigurationRepository, ProfilePeopleConfigurationRepository>(Lifestyle.Scoped);
-
-            //container.Register<IUserAppService, UserAppService>(Lifestyle.Scoped);
-            //container.Register<IUserService, UserService>(Lifestyle.Scoped);
-
-            //container.Verify();
-
-            //app.Use(async (context, next) =>
-            //{
-            //    using (AsyncScopedLifestyle.BeginScope(container))
-            //    {
-            //        await next();
-            //    }
-            //});
         }
 
        
@@ -86,7 +69,6 @@ namespace Boma.Rs.Api
                 IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.Always
             };
 
-
             var formatters = config.Formatters;
             formatters.Add(new BsonMediaTypeFormatter());
 
@@ -99,6 +81,9 @@ namespace Boma.Rs.Api
 
             //// adiciona os filters ao pipeline
             config.Filters.Add(new AuthorizeAttribute());
+
+
+
 
 
             return config;

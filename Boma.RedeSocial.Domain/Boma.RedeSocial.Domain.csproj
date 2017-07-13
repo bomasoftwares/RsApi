@@ -61,6 +61,7 @@
     <Compile Include="Common\Entities\Document.cs" />
     <Compile Include="Common\Entities\DomainEntityBase.cs" />
     <Compile Include="Common\Entities\DomainFileBase.cs" />
+    <Compile Include="Common\Entities\DomainIdentityBase.cs" />
     <Compile Include="Common\Enums\Enumerators.cs" />
     <Compile Include="Files\Entities\File.cs" />
     <Compile Include="Files\Entities\Photo.cs" />
@@ -77,10 +78,7 @@
     <Compile Include="Profiles\Interfaces\IProfileRepository.cs" />
     <Compile Include="Profiles\Interfaces\IProfile.cs" />
     <Compile Include="Subscriptions\Interfaces\ISubscription.cs" />
-    <Compile Include="Users\Entities\AspNetUser.cs" />
-    <Compile Include="Users\Interfaces\IUser.cs" />
     <Compile Include="Common\Interfaces\ICommonRepository.cs" />
-    <Compile Include="Users\Interfaces\IUserAspNetRepository.cs" />
     <Compile Include="Users\Interfaces\IUserRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Subscriptions\Financials\Entities\FinancialInfo.cs" />

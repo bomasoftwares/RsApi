@@ -1,7 +1,6 @@
 ﻿using Boma.RedeSocial.AppService.Users.Interfaces;
 using System;
 using Boma.RedeSocial.AppService.Users.DTOs;
-using Boma.RedeSocial.Domain.Interfaces.Repositories;
 using Boma.RedeSocial.Crosscut.AssertConcern;
 using Boma.RedeSocial.Domain.Users.Interfaces;
 using Boma.RedeSocial.AppService.Users.Commands;
@@ -17,14 +16,12 @@ using Boma.RedeSocial.AppService.Users.DTOs.Profiles;
 using Boma.RedeSocial.Domain.Profiles.Interfaces;
 using Boma.RedeSocial.Domain.Profiles.Entities;
 using System.Web;
-using System.Data.SqlClient;
 
 namespace Boma.RedeSocial.AppService.Users.Services
 {
     public class UserAppService : IUserAppService
     {
         private IUserRepository UserRepository { get; }
-        private IUserAspNetRepository UserAspNetRepository { get; }
         private IProfileRepository ProfileRepository { get; }
         private IProfilePeopleConfigurationRepository ProfilePeopleConfigurationRepository { get; }
         private ISexMoveIdentityStore UserIdentityStore { get; }
@@ -34,14 +31,11 @@ namespace Boma.RedeSocial.AppService.Users.Services
 
         private ISexMoveContext SexMoveContext { get; set; }
 
-        public UserAppService(IUserRepository userRepository, IUserAspNetRepository userAspNetRepository, IProfileRepository profileRepository,
+        public UserAppService(IUserRepository userRepository, IProfileRepository profileRepository,
             IProfilePeopleConfigurationRepository profilePeopleConfigurationRepository, ISexMoveIdentityStore userIdentityStore, IBomaAuditing sexMoveAuditing,
                 ISexMoveUnitOfWork uow, IUserService userService, ISexMoveContext sexMoveContext)
         {
             UserRepository = userRepository;
-            UserRepository.SetUserContext(sexMoveContext.UserContext);
-
-            UserAspNetRepository = userAspNetRepository;
             ProfileRepository = profileRepository;
             ProfilePeopleConfigurationRepository = profilePeopleConfigurationRepository;
 
@@ -57,18 +51,15 @@ namespace Boma.RedeSocial.AppService.Users.Services
 
         public UserDetailDTO Get(Guid id)
         {
-            var aspNetUser = UserAspNetRepository.Get(id);
-            var user = UserRepository.Get(id);
+            var user = UserRepository.GetById(id);
 
-            AssertConcern.AssertArgumentNotNull(aspNetUser, "Usuário .NET não encontrado");
             AssertConcern.AssertArgumentNotNull(user, "Usuário .NET não encontrado");
-            AssertConcern.AssertArgumentNotEquals(user.Id, aspNetUser.Id, "Usuário diferentes foram encontrados");
 
             return new UserDetailDTO()
             {
-                Id = aspNetUser.Id,
-                Email = aspNetUser.Email,
-                UserName = aspNetUser.UserName,
+                Id = user.Id,
+                Email = user.Email,
+                NickName = user.UserName,
                 AccountType = (int)user.AccountType,
                 AccountTypeDescription = user.AccountType.ToString(),
                 UrlProfilePhoto = user.UrlProfilePhoto
@@ -77,13 +68,9 @@ namespace Boma.RedeSocial.AppService.Users.Services
 
         public UserDetailDTO Get(string name)
         {
-            AspNetUser aspNetUser = UserIdentityStore.FindByNameAsync(name).Result;
-            if (aspNetUser == null)
+            User user = UserIdentityStore.FindByNameAsync(name).Result;
+            if (user == null)
                 return new UserDetailDTO() { };
-
-            var user = UserRepository.Get(aspNetUser.UserId);
-
-            if (user == null) return new UserDetailDTO() { };
 
             return new UserDetailDTO()
             {
@@ -92,54 +79,28 @@ namespace Boma.RedeSocial.AppService.Users.Services
                 Email = user.Email,
                 Id = user.Id,
                 UrlProfilePhoto = user.UrlProfilePhoto,
-                UserName = user.UserName
+                NickName = user.UserName
             };
         }
 
-        public User GetDomainUser(string name)
-        {
-            var aspNetUser = UserIdentityStore.FindByNameAsync(name).Result;
-            var user = UserRepository.Get(aspNetUser.UserId);
-
-            return user;
-        }
+        public User GetDomainUser(string name) => UserIdentityStore.FindByNameAsync(name).Result;
 
         public Guid Create(NewUserCommand command)
         {
             try
             {
-                UserRepository.SetUserContext(command.NickName);
+                SexMoveContext.UserContext = command.NickName;
                 var existUser = UserRepository.GetByEmail(command.Email);
                 if (existUser == null) existUser = UserRepository.GetByUserName(command.NickName);
 
                 AssertConcern.AssertArgumentTrue(existUser == null, "Usuário já cadastrado");
 
-                var domainUser = new User()
-                {
-                    Id = Guid.NewGuid(),
-                    UserName = command.NickName,
-                    Email = command.Email,
-                    AccountType = AccountType.Normal
-                };
-
+                var domainUser = new User(command.NickName, command.Email, AccountType.Normal, SubscriptionType.Gratuity);
+                domainUser.GenerateNewId();
                 UserRepository.Save(domainUser);
                 AssertConcern.AssertArgumentNotGuidEmpty(domainUser.Id, "Id do usuário de domínio criado incorretamente");
 
-                var aspNetUser = new AspNetUser()
-                {
-                    PasswordHash = command.Password,
-                    UserName = domainUser.UserName,
-                    Email = domainUser.Email,
-                    UserId = domainUser.Id
-                };
-                aspNetUser.SetId(domainUser.Id);
-
-                AssertConcern.AssertArgumentNotGuidEmpty(aspNetUser.UserId, "Id do usuário está inválido");
-                AssertConcern.AssertArgumentEquals(Guid.Parse(aspNetUser.Id), aspNetUser.UserId, "Ids não batem. Devem sempre ser iguais");
-
                 Uow.Commit();
-
-                UserIdentityStore.CreateAsync(aspNetUser).Wait();
                 
                 // SexMoveAuditing.Audit(new AuditCreateCommand("Usuário criado", new { User = domainUser, AspNetUser = aspNetUser }));
 
@@ -157,7 +118,7 @@ namespace Boma.RedeSocial.AppService.Users.Services
         public void Update(Guid UserId, UpdateUserCommand command, string userName)
         {
             // ToDo : editar o e-mail e username nas duas tabelas(Users e AspNetUsers)
-            var user = UserRepository.Get(UserId);
+            var user = UserRepository.GetById(UserId);
 
             AssertConcern.AssertArgumentNotNull(user, "Usuário inexistente");
             AssertConcern.AssertArgumentTrue(user.Id == UserId, "Usuário inválido para atualização");
@@ -184,11 +145,8 @@ namespace Boma.RedeSocial.AppService.Users.Services
             var user = UserRepository.GetByEmail(command.Email);
             AssertConcern.AssertArgumentNotNull(user, "Usuário não encontrado");
 
-            var identityUser = UserAspNetRepository.GetIdentityUser(user.Id);
-            AssertConcern.AssertArgumentNotNull(identityUser, "Usuário Identity não encontrado");
-
-            var passwordKey = UserService.GeneratePasswordKey(identityUser);
-            UserAspNetRepository.SavePasswordKey(identityUser.UserId, passwordKey);
+            var passwordKey = UserService.GeneratePasswordKey(user);
+            UserRepository.SavePasswordKey(user.Id, passwordKey);
 
             var sB = new StringBuilder();
 
@@ -200,24 +158,24 @@ namespace Boma.RedeSocial.AppService.Users.Services
               .Append("Equipe SexMove");
 
             var emailService = new EmailService();
-            emailService.SendEmail(sB.ToString(), "SexMove - Recuperar senha", identityUser.Email);
+            emailService.SendEmail(sB.ToString(), "SexMove - Recuperar senha", user.Email);
 
             Uow.Commit();
         }
 
         public string ResetPassword(ResetPasswordCommand command)
         {
-            var user = UserAspNetRepository.GetIdentityUserByEmail(command.Email);
+            var user = UserRepository.GetByEmail(command.Email);
 
             AssertConcern.AssertArgumentNotNull(user, "Usuário não encontrado");
             AssertConcern.AssertArgumentEquals(user.PasswordResetKey, command.PasswordResetKey, "Código inválido para resetar senha");
 
-            var newPassword = $"{DateTime.UtcNow:MMyy}user@#!{DateTime.UtcNow:yydd}"; // Nova senha para acesso''
+            var newPassword = $"{DateTime.UtcNow:MMyy}user@#!{DateTime.UtcNow:yydd}"; // Nova senha para acesso
 
             UserIdentityStore.SetIdentityStoreUser(user);
             UserIdentityStore.SetPasswordHashAsync(user, newPassword).Wait();
             user.SetPasswordResetKey(null);
-            UserAspNetRepository.Update(user);
+            UserRepository.Update(user);
             Uow.Commit();
             return newPassword;
         }
@@ -328,7 +286,7 @@ namespace Boma.RedeSocial.AppService.Users.Services
 
         public void UpdateProfile(Guid UserId, UpdateProfileCommand command, string userName)
         {
-            var profile = UserRepository.Get(UserId);
+            var profile = UserRepository.GetById(UserId);
 
             AssertConcern.AssertArgumentNotNull(profile, "Usuário inexistente");
             AssertConcern.AssertArgumentTrue(profile.Id == UserId, "Usuário inválido para atualização");

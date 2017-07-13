@@ -27,13 +27,6 @@ namespace Boma.RedeSocial.Infrastructure.Data
             SexMoveContext = sexMoveContext;
         }
 
-        //public override int SaveChanges()
-        //{
-        //    //var entriesChangeds = ChangeTracker.Entries();
-        //    //CreateAudit(entriesChangeds);
-        //    return base.SaveChanges();
-        //}
-
         public void Commit() => SaveChanges();
 
         private void CreateAudit(IEnumerable<DbEntityEntry> entries)
@@ -46,8 +39,7 @@ namespace Boma.RedeSocial.Infrastructure.Data
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Configurations.Add(new UserDbMap());
-            modelBuilder.Configurations.Add(new ProfileDbMap());
-            modelBuilder.Configurations.Add(new ProfilePeopleConfigurationDbMap());
+
             base.OnModelCreating(modelBuilder);
         }
 
@@ -56,13 +48,14 @@ namespace Boma.RedeSocial.Infrastructure.Data
 
         #region DbSets 
         
-        public DbSet<User> ApplicationUser { get; set; }
-        public DbSet<AspNetUser> AspNetUsers { get; set; }
-        public DbSet<Profile> Profiles { get; set; }
+        public DbSet<User> Users { get; set; }
 
-        public DbSet<ProfilePeopleConfiguration> ProfilePeopleConfigurations { get; set; }
+        //public DbSet<Profile> Profiles { get; set; }
+
+        //public DbSet<ProfilePeopleConfiguration> ProfilePeopleConfigurations { get; set; }
 
         #endregion
 
+        public static SexMoveUnitOfWork Create() => new SexMoveUnitOfWork();
     }
 }

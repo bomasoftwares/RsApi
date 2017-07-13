@@ -12,30 +12,31 @@ namespace Boma.RedeSocial.Infrastructure.Data.EntityFramework.Identity.Manager
 {
     public class SexMoveIdentityStore : ISexMoveIdentityStore
     {
-        private AspNetUser User { get; set; }
-        UserStore<IdentityUser> userStore = new UserStore<IdentityUser>(new SexMoveIdentityContext());
+        private IdentityUser User { get; set; }
+        UserStore<IdentityUser> userStore = new UserStore<IdentityUser>(new SexMoveUnitOfWork());
         public SexMoveIdentityStore()
         {
         }
 
 
-        public Task CreateAsync(AspNetUser user)
+        public Task CreateAsync(IdentityUser user)
         {
-            var context = userStore.Context as SexMoveIdentityContext;
-            User = user;
-            SetPasswordHashAsync(user, user.PasswordHash);
+            throw new NotImplementedException();
+            //var context = userStore.Context as SexMoveUnitOfWork;
+            //User = user;
+            //SetPasswordHashAsync(user, user.PasswordHash);
 
-            context.Users.FirstOrDefault(a => a.Id == user.Id);
+            //context.Users.FirstOrDefault(a => a.Id == );
 
 
-            context.Users.Add(User);
-            context.Configuration.ValidateOnSaveEnabled = false;
-            return context.SaveChangesAsync();
+            //context.Users.Add(User);
+            //context.Configuration.ValidateOnSaveEnabled = false;
+            //return context.SaveChangesAsync();
         }
 
-        public Task DeleteAsync(AspNetUser user)
+        public Task DeleteAsync(User user)
         {
-            var context = userStore.Context as SexMoveIdentityContext;
+            var context = userStore.Context as SexMoveUnitOfWork;
             context.Users.Remove(user);
             context.Configuration.ValidateOnSaveEnabled = false;
             return context.SaveChangesAsync();
@@ -44,27 +45,25 @@ namespace Boma.RedeSocial.Infrastructure.Data.EntityFramework.Identity.Manager
 
         public void Dispose() => userStore.Dispose();
 
-        public Task<AspNetUser> FindByIdAsync(string userId)
+        public Task<User> FindByIdAsync(string userId)
         {
-            var context = userStore.Context as SexMoveIdentityContext;
-            return context.Users.Where(u => u.Id.ToLower() == userId.ToLower()).FirstOrDefaultAsync();
+            var context = userStore.Context as SexMoveUnitOfWork;
+            return context.Users.Where(u => u.Id == Guid.Parse(userId)).FirstOrDefaultAsync();
         }
 
-        public Task<AspNetUser> FindByNameAsync(string userName)
+        public Task<User> FindByNameAsync(string userName)
         {
-            var context = userStore.Context as SexMoveIdentityContext;
+            var context = userStore.Context as SexMoveUnitOfWork;
             return context.Users.Where(u => u.UserName.ToLower() == userName.ToLower()).FirstOrDefaultAsync();
         }
 
-        public Task<bool> HasPasswordAsync(AspNetUser user)
+        public Task<bool> HasPasswordAsync(User user)
         {
-            var identityUser = ToIdentityUser(user);
-            var task = userStore.HasPasswordAsync(identityUser);
-            SetApplicationUser(user, identityUser);
+            var task = userStore.HasPasswordAsync(user);
             return task;
         }
 
-        public Task<string> GetPasswordHashAsync(AspNetUser user)
+        public Task<string> GetPasswordHashAsync(User user)
         {
             byte[] salt;
             byte[] buffer2;
@@ -94,36 +93,32 @@ namespace Boma.RedeSocial.Infrastructure.Data.EntityFramework.Identity.Manager
             return Task.FromResult(passwordHash);
         }
 
-        public Task SetPasswordHashAsync(AspNetUser user, string passwordHash)
+        public Task SetPasswordHashAsync(User user, string passwordHash)
         {
-            var identityUser = ToIdentityUser(user);
             var task = GetPasswordHashAsync(passwordHash);
-            identityUser.PasswordHash = task.Result;
-            SetApplicationUser(user, identityUser);
+            user.PasswordHash = task.Result;
             return task;
         }
 
-        public Task<string> GetSecurityStampAsync(AspNetUser user)
+        public Task<string> GetSecurityStampAsync(User user)
         {
-            var identityUser = ToIdentityUser(user);
-            var task = userStore.GetSecurityStampAsync(identityUser);
-            SetApplicationUser(user, identityUser);
-            return task;
+            throw new NotImplementedException();
+            //var task = userStore.GetSecurityStampAsync(user);
+            //SetApplicationUser(user, identityUser);
+            //return task;
 
         }
 
-        public Task SetSecurityStampAsync(AspNetUser user, string stamp)
+        public Task SetSecurityStampAsync(User user, string stamp)
         {
-            var identityUser = ToIdentityUser(user);
-            var task = userStore.SetSecurityStampAsync(identityUser, stamp);
-            SetApplicationUser(user, identityUser);
+            var task = userStore.SetSecurityStampAsync(user, stamp);
             return task;
 
         }
 
-        public Task UpdateAsync(AspNetUser user)
+        public Task UpdateAsync(User user)
         {
-            var context = userStore.Context as SexMoveIdentityContext;
+            var context = userStore.Context as SexMoveUnitOfWork;
             context.Users.Attach(user);
             context.Entry(user).State = EntityState.Modified;
             context.Configuration.ValidateOnSaveEnabled = false;
@@ -131,50 +126,38 @@ namespace Boma.RedeSocial.Infrastructure.Data.EntityFramework.Identity.Manager
 
         }
 
-        private void SetApplicationUser(AspNetUser user, IdentityUser identityUser)
-        {
-            User.PasswordHash = identityUser.PasswordHash;
-            User.SecurityStamp = identityUser.SecurityStamp;
-            User.SetId(Guid.Parse(identityUser.Id));
-            User.UserName = identityUser.UserName;
-        }
-
-        private IdentityUser ToIdentityUser(AspNetUser user)
-        {
-            return new IdentityUser
-            {
-                Id = user.Id,
-                PasswordHash = user.PasswordHash,
-                SecurityStamp = user.SecurityStamp,
-                UserName = user.UserName,
-                Email = user.Email,
-                EmailConfirmed = user.EmailConfirmed
-            };
-        }
-
-        public void SetIdentityStoreUser(AspNetUser user)
-        {
-            User = user;
-        }
-
         public IdentityUser GetIdentityUserByUserNameAndPassword(string userName, string password)
         {
-            var context = userStore.Context as SexMoveIdentityContext;
+            var context = userStore.Context as SexMoveUnitOfWork;
             var passwordHash = GetPasswordHashAsync(password).Result;
             var user = context.Users.FirstOrDefault(p => p.UserName == userName && p.PasswordHash == passwordHash);
 
             if (user == null) return null;
 
-            return ToIdentityUser(user);
+            return user;
         }
 
-        public AspNetUser GetAspNetUserByUserNameAndPassword(string userName, string password)
+        public User GetAspNetUserByUserNameAndPassword(string userName, string password)
         {
-            var context = userStore.Context as SexMoveIdentityContext;
+            var context = userStore.Context as SexMoveUnitOfWork;
             var passwordHash = GetPasswordHashAsync(password).Result;
             return context.Users.Where(u => u.UserName.ToLower() == userName.ToLower() && u.PasswordHash == passwordHash).FirstOrDefaultAsync().Result;
         }
 
+        public void SetIdentityStoreUser(User user)
+        {
+            throw new NotImplementedException();
+        }
+
+        User ISexMoveIdentityStore.GetIdentityUserByUserNameAndPassword(string userName, string password)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task CreateAsync(User user)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     

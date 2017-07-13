@@ -2,7 +2,6 @@
 using Boma.RedeSocial.AppService.Users.Services;
 using Boma.RedeSocial.Crosscut.Auditing;
 using Boma.RedeSocial.Domain.Context.Interfaces;
-using Boma.RedeSocial.Domain.Interfaces.Repositories;
 using Boma.RedeSocial.Domain.Profiles.Interfaces;
 using Boma.RedeSocial.Domain.Users.Interfaces;
 using Boma.RedeSocial.Domain.Users.Services;
@@ -12,11 +11,7 @@ using Boma.RedeSocial.Infrastructure.Data.EntityFramework.Identity.Manager;
 using Boma.RedeSocial.Infrastructure.Data.EntityFramework.Repositories.Profiles;
 using Boma.RedeSocial.Infrastructure.Data.EntityFramework.Repositories.Users;
 using Boma.Rs.Api.Context;
-using Boma.Rs.Api.Models;
 using SimpleInjector;
-using SimpleInjector.Extensions.ExecutionContextScoping;
-using SimpleInjector.Integration.Web;
-using SimpleInjector.Integration.Web.Mvc;
 using SimpleInjector.Integration.WebApi;
 using SimpleInjector.Lifestyles;
 using System.Configuration;
@@ -42,18 +37,16 @@ namespace Boma.Rs.Api
             var container = new Container();
             container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
 
-
             container.Register<DbConnection>(() => new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString), Lifestyle.Scoped);
-            container.Register<ISexMoveUnitOfWork, SexMoveUnitOfWork>();
-            container.Register<ISexMoveContext, SexMoveContext>();
+            container.Register<ISexMoveContext, SexMoveContext>(Lifestyle.Singleton);
+            container.Register<ISexMoveUnitOfWork, SexMoveUnitOfWork>(Lifestyle.Singleton);
+            
             container.Register<ISexMoveIdentityStore, SexMoveIdentityStore>();
             container.Register<IBomaAuditing, SexMoveAuditing>();
-
             container.Register<IUserRepository, UserRepository>();
-            container.Register<IUserAspNetRepository, UserAspNetRepository>();
             container.Register<IProfileRepository, ProfileRepository>();
             container.Register<IProfilePeopleConfigurationRepository, ProfilePeopleConfigurationRepository>();
-
+            
             container.Register<IUserAppService, UserAppService>();
             container.Register<IUserService, UserService>();
 

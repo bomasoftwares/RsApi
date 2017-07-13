@@ -6,7 +6,7 @@ namespace Boma.RedeSocial.Domain.Users.Services
 {
     public class UserService: IUserService
     {
-        public string GeneratePasswordKey(AspNetUser user)
+        public string GeneratePasswordKey(User user)
         {
             return user.ResetPassword(user);
         }

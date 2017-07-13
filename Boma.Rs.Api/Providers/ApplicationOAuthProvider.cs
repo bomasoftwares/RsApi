@@ -46,6 +46,9 @@ namespace Boma.Rs.Api.Providers
 
                 var user = ToApplicationUser(identityUser);
                 var claimsIdentity = CreateClaimIdentity(user, OAuthDefaults.AuthenticationType);
+                claimsIdentity.AddClaim(new Claim(ClaimTypes.Name, user.UserName));
+                claimsIdentity.AddClaim(new Claim(ClaimTypes.Email, user.Email));
+                
                 var properties = CreateProperties(user.UserName);
                 var ticket = new AuthenticationTicket(claimsIdentity, properties);
                 context.Validated(ticket);
