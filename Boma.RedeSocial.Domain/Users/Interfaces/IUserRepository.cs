@@ -16,5 +16,7 @@ namespace Boma.RedeSocial.Domain.Users.Interfaces
         void Save(User entity);
         void Update(User entity);
         void Remove(User entity);
+
+        User Authenticate(string userName, string password);
     }
 }

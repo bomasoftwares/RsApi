@@ -5,7 +5,6 @@ using Boma.RedeSocial.Crosscut.AssertConcern;
 using Boma.RedeSocial.Domain.Users.Interfaces;
 using Boma.RedeSocial.AppService.Users.Commands;
 using Boma.RedeSocial.Domain.Users.Entities;
-using Boma.RedeSocial.Infrastructure.Data.EntityFramework.Identity.Manager;
 using Boma.RedeSocial.Crosscut.Auditing;
 using Boma.RedeSocial.Domain.Context.Interfaces;
 using Boma.RedeSocial.Domain.Common.Enums;
@@ -16,36 +15,35 @@ using Boma.RedeSocial.AppService.Users.DTOs.Profiles;
 using Boma.RedeSocial.Domain.Profiles.Interfaces;
 using Boma.RedeSocial.Domain.Profiles.Entities;
 using System.Web;
+using Boma.RedeSocial.Infrastructure.Data.EntityFramework.Repositories.Users;
+using Boma.RedeSocial.Infrastructure.Data;
+using Boma.RedeSocial.Domain.Users.Services;
 
 namespace Boma.RedeSocial.AppService.Users.Services
 {
     public class UserAppService : IUserAppService
     {
-        private IUserRepository UserRepository { get; }
-        private IProfileRepository ProfileRepository { get; }
-        private IProfilePeopleConfigurationRepository ProfilePeopleConfigurationRepository { get; }
-        private ISexMoveIdentityStore UserIdentityStore { get; }
-        private IBomaAuditing SexMoveAuditing { get; set; }
-        private ISexMoveUnitOfWork Uow { get; set; }
-        private IUserService UserService { get; set; }
+        private UserRepository UserRepository { get; }
+        private SexMoveContext Uow { get; set; }
+        private UserService UserService { get; set; }
 
-        private ISexMoveContext SexMoveContext { get; set; }
-
-        public UserAppService(IUserRepository userRepository, IProfileRepository profileRepository,
-            IProfilePeopleConfigurationRepository profilePeopleConfigurationRepository, ISexMoveIdentityStore userIdentityStore, IBomaAuditing sexMoveAuditing,
-                ISexMoveUnitOfWork uow, IUserService userService, ISexMoveContext sexMoveContext)
+        public UserAppService()
         {
-            UserRepository = userRepository;
-            ProfileRepository = profileRepository;
-            ProfilePeopleConfigurationRepository = profilePeopleConfigurationRepository;
-
-            UserIdentityStore = userIdentityStore;
-            SexMoveAuditing = sexMoveAuditing;
-            Uow = uow;
-            UserService = userService;
-            SexMoveContext = sexMoveContext;
-
+            Uow = new SexMoveContext();
+            UserRepository = new UserRepository(Uow);
+            UserService = new UserService();
         }
+
+        #region Authenticate
+
+        public User Authenticate(string userName, string password)
+        {
+            var hashPassword = SecurityService.Encrypt(password);
+            return UserRepository.Authenticate(userName, hashPassword);
+        }
+        
+
+        #endregion
 
         #region Serviços de usuários
 
@@ -57,7 +55,7 @@ namespace Boma.RedeSocial.AppService.Users.Services
 
             return new UserDetailDTO()
             {
-                Id = user.Id,
+                Id = user.UserId,
                 Email = user.Email,
                 NickName = user.UserName,
                 AccountType = (int)user.AccountType,
@@ -68,7 +66,7 @@ namespace Boma.RedeSocial.AppService.Users.Services
 
         public UserDetailDTO Get(string name)
         {
-            User user = UserIdentityStore.FindByNameAsync(name).Result;
+            User user = UserRepository.GetByUserName(name);
             if (user == null)
                 return new UserDetailDTO() { };
 
@@ -77,39 +75,35 @@ namespace Boma.RedeSocial.AppService.Users.Services
                 AccountType = (int)user.AccountType,
                 AccountTypeDescription = user.AccountType.ToString(),
                 Email = user.Email,
-                Id = user.Id,
+                Id = user.UserId,
                 UrlProfilePhoto = user.UrlProfilePhoto,
                 NickName = user.UserName
             };
         }
 
-        public User GetDomainUser(string name) => UserIdentityStore.FindByNameAsync(name).Result;
+        public User GetDomainUser(string name) => UserRepository.GetByUserName(name);
 
         public Guid Create(NewUserCommand command)
         {
             try
             {
-                SexMoveContext.UserContext = command.NickName;
                 var existUser = UserRepository.GetByEmail(command.Email);
                 if (existUser == null) existUser = UserRepository.GetByUserName(command.NickName);
 
                 AssertConcern.AssertArgumentTrue(existUser == null, "Usuário já cadastrado");
 
-                var domainUser = new User(command.NickName, command.Email, AccountType.Normal, SubscriptionType.Gratuity);
-                domainUser.GenerateNewId();
-                UserRepository.Save(domainUser);
-                AssertConcern.AssertArgumentNotGuidEmpty(domainUser.Id, "Id do usuário de domínio criado incorretamente");
+                var user = new User(command.NickName, command.Email, AccountType.Normal, SubscriptionType.Gratuity);
+                user.GenerateNewId();
+                user.PasswordHash = SecurityService.Encrypt(command.Password);
+                UserRepository.Save(user);
+                AssertConcern.AssertArgumentNotGuidEmpty(user.UserId, "Id do usuário de domínio criado incorretamente");
 
                 Uow.Commit();
-                
-                // SexMoveAuditing.Audit(new AuditCreateCommand("Usuário criado", new { User = domainUser, AspNetUser = aspNetUser }));
 
-                return domainUser.Id;
+                return user.UserId;
             }
             catch (Exception ex)
             {
-                // SexMoveAuditing.AuditError(new AuditErrorCommand(ex.Message, ex));
-
                 throw ex;
             }
 
@@ -121,7 +115,7 @@ namespace Boma.RedeSocial.AppService.Users.Services
             var user = UserRepository.GetById(UserId);
 
             AssertConcern.AssertArgumentNotNull(user, "Usuário inexistente");
-            AssertConcern.AssertArgumentTrue(user.Id == UserId, "Usuário inválido para atualização");
+            AssertConcern.AssertArgumentTrue(user.Id == UserId.ToString(), "Usuário inválido para atualização");
 
             if (command.AccountType != -1)
             {
@@ -146,7 +140,7 @@ namespace Boma.RedeSocial.AppService.Users.Services
             AssertConcern.AssertArgumentNotNull(user, "Usuário não encontrado");
 
             var passwordKey = UserService.GeneratePasswordKey(user);
-            UserRepository.SavePasswordKey(user.Id, passwordKey);
+            UserRepository.SavePasswordKey(user.UserId, passwordKey);
 
             var sB = new StringBuilder();
 
@@ -170,17 +164,14 @@ namespace Boma.RedeSocial.AppService.Users.Services
             AssertConcern.AssertArgumentNotNull(user, "Usuário não encontrado");
             AssertConcern.AssertArgumentEquals(user.PasswordResetKey, command.PasswordResetKey, "Código inválido para resetar senha");
 
-            var newPassword = $"{DateTime.UtcNow:MMyy}user@#!{DateTime.UtcNow:yydd}"; // Nova senha para acesso
+            var newPassword = $"{DateTime.UtcNow:MMyy}user@#!{DateTime.UtcNow:yydd}"; 
 
-            UserIdentityStore.SetIdentityStoreUser(user);
-            UserIdentityStore.SetPasswordHashAsync(user, newPassword).Wait();
-            user.SetPasswordResetKey(null);
+            var hashResetKey = SecurityService.Encrypt(newPassword);
+            user.SetPasswordResetKey(hashResetKey);
             UserRepository.Update(user);
             Uow.Commit();
             return newPassword;
         }
-
-        public void SetUserContext(string userName) => SexMoveContext.UserContext = userName;
 
         #endregion
 
@@ -215,72 +206,74 @@ namespace Boma.RedeSocial.AppService.Users.Services
 
         public Guid InsertProfile(NewProfileCommand command)
         {
-            try
-            {
-                var existProfile = ProfileRepository.GetById(command.UserId);
-                AssertConcern.AssertArgumentTrue(existProfile == null, "Usuário já possui um perfil");
+            return Guid.Empty;
 
-                var profile = new Profile(command.UserId);
-                profile.Id = Guid.NewGuid();
-                profile.Genre = (TypePerson)command.Genre;
-                profile.MaritalStatus = (MaritalStatus)command.MaritalStatus;
-                profile.Summary = command.Summary;
-                profile.ZipCode = command.ZipCode;
+            //try
+            //{
+                //var existProfile = ProfileRepository.GetById(command.UserId);
+                //AssertConcern.AssertArgumentTrue(existProfile == null, "Usuário já possui um perfil");
 
-                if (command.PeopleOne != null)
-                {
-                    profile.PeopleOneConfiguration = new ProfilePeopleConfiguration()
-                    {
-                        Id = Guid.NewGuid(),
-                        ADrinker = command.PeopleOne.ADrinker,
-                        ASmoker = command.PeopleOne.ASmoker,
-                        BirthDate = command.PeopleOne.BirthDate,
-                        EyeColor = (EyeColor)command.PeopleOne.EyeColor,
-                        HairColor = (HairColor)command.PeopleOne.HairColor,
-                        Height = command.PeopleOne.Height,
-                        Name = command.PeopleOne.Name,
-                        Weight = command.PeopleOne.Weight,
-                        ProfileId = profile.Id
-                    };
-                    ProfilePeopleConfigurationRepository.Save(profile.PeopleOneConfiguration);
-                }
+                //var profile = new Profile(command.UserId);
+                //profile.Id = Guid.NewGuid();
+                //profile.Genre = (TypePerson)command.Genre;
+                //profile.MaritalStatus = (MaritalStatus)command.MaritalStatus;
+                //profile.Summary = command.Summary;
+                //profile.ZipCode = command.ZipCode;
+
+                //if (command.PeopleOne != null)
+                //{
+                //    profile.PeopleOneConfiguration = new ProfilePeopleConfiguration()
+                //    {
+                //        Id = Guid.NewGuid(),
+                //        ADrinker = command.PeopleOne.ADrinker,
+                //        ASmoker = command.PeopleOne.ASmoker,
+                //        BirthDate = command.PeopleOne.BirthDate,
+                //        EyeColor = (EyeColor)command.PeopleOne.EyeColor,
+                //        HairColor = (HairColor)command.PeopleOne.HairColor,
+                //        Height = command.PeopleOne.Height,
+                //        Name = command.PeopleOne.Name,
+                //        Weight = command.PeopleOne.Weight,
+                //        ProfileId = profile.Id
+                //    };
+                //    ProfilePeopleConfigurationRepository.Save(profile.PeopleOneConfiguration);
+                //}
 
 
-                if (command.PeopleTwo != null)
-                {
-                    profile.PeopleTwoConfiguration = new ProfilePeopleConfiguration()
-                    {
-                        Id = Guid.NewGuid(),
-                        ADrinker = command.PeopleTwo.ADrinker,
-                        ASmoker = command.PeopleTwo.ASmoker,
-                        BirthDate = command.PeopleTwo.BirthDate,
-                        EyeColor = (EyeColor)command.PeopleTwo.EyeColor,
-                        HairColor = (HairColor)command.PeopleTwo.HairColor,
-                        Height = command.PeopleTwo.Height,
-                        Name = command.PeopleTwo.Name,
-                        Weight = command.PeopleTwo.Weight,
-                        ProfileId = profile.Id,
+                //if (command.PeopleTwo != null)
+                //{
+                //    profile.PeopleTwoConfiguration = new ProfilePeopleConfiguration()
+                //    {
+                //        Id = Guid.NewGuid(),
+                //        ADrinker = command.PeopleTwo.ADrinker,
+                //        ASmoker = command.PeopleTwo.ASmoker,
+                //        BirthDate = command.PeopleTwo.BirthDate,
+                //        EyeColor = (EyeColor)command.PeopleTwo.EyeColor,
+                //        HairColor = (HairColor)command.PeopleTwo.HairColor,
+                //        Height = command.PeopleTwo.Height,
+                //        Name = command.PeopleTwo.Name,
+                //        Weight = command.PeopleTwo.Weight,
+                //        ProfileId = profile.Id,
 
-                    };
-                    ProfilePeopleConfigurationRepository.Save(profile.PeopleTwoConfiguration);
-                }
+                //    };
+                //    ProfilePeopleConfigurationRepository.Save(profile.PeopleTwoConfiguration);
+                //}
 
-                ProfileRepository.Save(profile);
+                //ProfileRepository.Save(profile);
 
-                Uow.Commit();
+                //Uow.Commit();
                 // SexMoveAuditing.Audit(new AuditCreateCommand("Perfil criado", new { Profile = profile}));
                 // SexMoveAuditing.Audit(new AuditCreateCommand("Configuração de perfil criada", new { ProfilePeopleConfiguration = profile.PeopleOneConfiguration }));
                 // SexMoveAuditing.Audit(new AuditCreateCommand("Configuração de perfil criada", new { ProfilePeopleConfiguration = profile.PeopleTwoConfiguration }));
 
 
-                return profile.Id;
+                //return profile.Id;
 
-            }
-            catch (Exception)
-            {
-                // SexMoveAuditing.AuditError(new AuditErrorCommand(ex.Message, ex));
-                throw;
-            }
+            //}
+            //catch (Exception)
+            //{
+            //    // SexMoveAuditing.AuditError(new AuditErrorCommand(ex.Message, ex));
+            //    throw;
+            //}
 
         }
 
@@ -289,7 +282,7 @@ namespace Boma.RedeSocial.AppService.Users.Services
             var profile = UserRepository.GetById(UserId);
 
             AssertConcern.AssertArgumentNotNull(profile, "Usuário inexistente");
-            AssertConcern.AssertArgumentTrue(profile.Id == UserId, "Usuário inválido para atualização");
+            AssertConcern.AssertArgumentTrue(profile.Id == UserId.ToString(), "Usuário inválido para atualização");
 
             if (command.AccountType != -1)
             {
@@ -312,6 +305,8 @@ namespace Boma.RedeSocial.AppService.Users.Services
         {
             throw new NotImplementedException();
         }
+
+        
 
 
 

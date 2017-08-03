@@ -2,7 +2,7 @@ namespace Boma.RedeSocial.Infrastructure.Data.Migrations
 {
     using System.Data.Entity.Migrations;
 
-    internal sealed class ApplicationConfiguration : DbMigrationsConfiguration<SexMoveUnitOfWork>
+    internal sealed class ApplicationConfiguration : DbMigrationsConfiguration<SexMoveContext>
     {
         public ApplicationConfiguration()
         {
@@ -10,7 +10,7 @@ namespace Boma.RedeSocial.Infrastructure.Data.Migrations
             AutomaticMigrationDataLossAllowed = false;
         }
 
-        protected override void Seed(SexMoveUnitOfWork context)
+        protected override void Seed(SexMoveContext context)
         {
             
         }

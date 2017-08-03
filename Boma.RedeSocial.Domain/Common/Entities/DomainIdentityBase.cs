@@ -4,9 +4,15 @@ using System;
 
 namespace Boma.RedeSocial.Domain.Common.Entities
 {
-    public class DomainIdentityBase: IdentityUser, IUser<Guid>
+    public class DomainIdentityBase: IdentityUser
     {
-        public Guid Id { get; set; }
+        public virtual Guid UserId
+        {
+            get
+            {
+                return Guid.Parse(Id);
+            }
+        }
         public DateTime CreatedAt { get; set; }
         public string CreatedBy { get; set; }
         public DateTime UpdatedAt { get; set; }

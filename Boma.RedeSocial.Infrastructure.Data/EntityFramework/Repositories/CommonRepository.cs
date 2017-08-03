@@ -15,16 +15,16 @@ namespace Boma.RedeSocial.Infrastructure.Data.EntityFramework.Repositories
         where T : DomainEntity
     {
         protected ISexMoveContext SexMoveContext { get; set; }
-        protected SexMoveUnitOfWork Uow { get; set; }
+        protected SexMoveContext Uow { get; set; }
         protected IDbConnection Dapper { get; set; }
 
         public CommonRepository(ISexMoveUnitOfWork uow, ISexMoveContext sexMoveContext)
         {
             SexMoveContext = sexMoveContext;
-            var _uow = uow as SexMoveUnitOfWork;
+            var _uow = uow as SexMoveContext;
 
             if (_uow == null)
-                throw new Exception($"O repositório deve ser do tipo {nameof(SexMoveUnitOfWork)}.");
+                throw new Exception($"O repositório deve ser do tipo {nameof(Data.SexMoveContext)}.");
 
             Uow = _uow;
             Dapper = _uow.Database.Connection;

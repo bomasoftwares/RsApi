@@ -34,7 +34,7 @@ namespace Boma.RedeSocial.Domain.Users.Entities
 
         public void GenerateNewId()
         {
-            Id = Guid.NewGuid();
+            Id = Guid.NewGuid().ToString();
         }
     }
 }

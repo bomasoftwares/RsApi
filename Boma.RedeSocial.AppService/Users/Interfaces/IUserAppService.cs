@@ -24,7 +24,6 @@ namespace Boma.RedeSocial.AppService.Users.Interfaces
         void UpdateProfile(Guid UserId, UpdateProfileCommand command, string userName);
         ProfileDto GetProfile(Guid userId);
         void RemoveProfile(Guid userId);
-
-        void SetUserContext(string user);
+        User Authenticate(string userName, string password);
     }
 }
