@@ -32,7 +32,7 @@ namespace Boma.RedeSocial.Infrastructure.Data
 
         #region DbSets 
         
-        public DbSet<User> Users { get; set; }
+        public DbSet<User> AppUsers { get; set; }
 
         #endregion
 

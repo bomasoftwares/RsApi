@@ -1,4 +1,5 @@
 ﻿using Boma.RedeSocial.AppService.Users.Commands;
+using Boma.RedeSocial.AppService.Users.DTOs;
 using Boma.RedeSocial.AppService.Users.Services;
 using System;
 using System.Web.Http;
@@ -30,6 +31,16 @@ namespace Boma.RedeSocial.Api.Controllers
             return Ok(userId);
         }
 
+
+        [HttpGet]
+        [Route("users")]
+        public UserDetailDTO GetUserDetails()
+        {
+            var user = UserAppService.GetDomainUserByEmail(User.Identity.Name);
+            if (user == null) return new UserDetailDTO();
+            
+            return UserAppService.Get(user.UserId);
+        }
         #endregion
     }
 }

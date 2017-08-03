@@ -50,8 +50,7 @@ namespace Boma.RedeSocial.AppService.Users.Services
         public UserDetailDTO Get(Guid id)
         {
             var user = UserRepository.GetById(id);
-
-            AssertConcern.AssertArgumentNotNull(user, "Usuário .NET não encontrado");
+            if (user == null) return new UserDetailDTO();
 
             return new UserDetailDTO()
             {
@@ -66,7 +65,7 @@ namespace Boma.RedeSocial.AppService.Users.Services
 
         public UserDetailDTO Get(string name)
         {
-            User user = UserRepository.GetByUserName(name);
+            var user = UserRepository.GetByUserName(name);
             if (user == null)
                 return new UserDetailDTO() { };
 
@@ -82,6 +81,9 @@ namespace Boma.RedeSocial.AppService.Users.Services
         }
 
         public User GetDomainUser(string name) => UserRepository.GetByUserName(name);
+
+        public User GetDomainUserByEmail(string email) => UserRepository.GetByEmail(email);
+
 
         public Guid Create(NewUserCommand command)
         {

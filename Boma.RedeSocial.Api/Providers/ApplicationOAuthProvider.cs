@@ -10,12 +10,17 @@ using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
 using Boma.RedeSocial.Api.Models;
+using Boma.RedeSocial.Infrastructure.Data;
+using Boma.RedeSocial.Infrastructure.Data.EntityFramework.Repositories.Users;
+using Boma.RedeSocial.Domain.Users.Entities;
+using Boma.RedeSocial.Crosscut.Services;
 
 namespace Boma.RedeSocial.Api.Providers
 {
     public class ApplicationOAuthProvider : OAuthAuthorizationServerProvider
     {
         private readonly string _publicClientId;
+        public UserRepository UserRepository { get; }
 
         public ApplicationOAuthProvider(string publicClientId)
         {
@@ -25,29 +30,26 @@ namespace Boma.RedeSocial.Api.Providers
             }
 
             _publicClientId = publicClientId;
+
+            UserRepository = new UserRepository(new SexMoveContext());
         }
 
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
-            var userManager = context.OwinContext.GetUserManager<ApplicationUserManager>();
+            context.OwinContext.Response.Headers.Add("Access-Control-Allow-Origin", new[] { "*"});
+            
+            var authenticatedUser = UserRepository.Authenticate(context.UserName, SecurityService.Encrypt(context.Password));
 
-            ApplicationUser user = await userManager.FindAsync(context.UserName, context.Password);
-
-            if (user == null)
+            if (authenticatedUser == null)
             {
-                context.SetError("invalid_grant", "The user name or password is incorrect.");
+                context.SetError("invalid_grant", "Usuário ou senha inválidos");
                 return;
             }
 
-            ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(userManager,
-               OAuthDefaults.AuthenticationType);
-            ClaimsIdentity cookiesIdentity = await user.GenerateUserIdentityAsync(userManager,
-                CookieAuthenticationDefaults.AuthenticationType);
-
-            AuthenticationProperties properties = CreateProperties(user.UserName);
-            AuthenticationTicket ticket = new AuthenticationTicket(oAuthIdentity, properties);
+            var claimsIdentity = CreateClaimIdentityByUser(context.Options.AuthenticationType, authenticatedUser);
+            AuthenticationProperties properties = CreateProperties(authenticatedUser.UserName);
+            AuthenticationTicket ticket = new AuthenticationTicket(claimsIdentity, properties);
             context.Validated(ticket);
-            context.Request.Context.Authentication.SignIn(cookiesIdentity);
         }
 
         public override Task TokenEndpoint(OAuthTokenEndpointContext context)
@@ -93,6 +95,20 @@ namespace Boma.RedeSocial.Api.Providers
                 { "userName", userName }
             };
             return new AuthenticationProperties(data);
+        }
+
+        public static ClaimsIdentity CreateClaimIdentityByUser(string athenticationType, User user)
+        {
+            var identity = new ClaimsIdentity(athenticationType);
+
+            var claimList = new List<Claim>();
+
+            claimList.Add(new Claim(ClaimTypes.Name, user.Email));
+            claimList.Add(new Claim("sexmoveuser:id", user.Id.ToString()));
+
+            identity.AddClaims(claimList);
+
+            return identity;
         }
     }
 }
