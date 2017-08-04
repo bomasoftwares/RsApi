@@ -1,27 +1,20 @@
-﻿using Boma.RedeSocial.AppService.Users.Interfaces;
-using System;
+﻿using System;
 using Boma.RedeSocial.AppService.Users.DTOs;
 using Boma.RedeSocial.Crosscut.AssertConcern;
-using Boma.RedeSocial.Domain.Users.Interfaces;
 using Boma.RedeSocial.AppService.Users.Commands;
 using Boma.RedeSocial.Domain.Users.Entities;
-using Boma.RedeSocial.Crosscut.Auditing;
-using Boma.RedeSocial.Domain.Context.Interfaces;
 using Boma.RedeSocial.Domain.Common.Enums;
 using Boma.RedeSocial.Crosscut.Services;
 using System.Text;
 using Boma.RedeSocial.AppService.Users.Commands.Profiles;
 using Boma.RedeSocial.AppService.Users.DTOs.Profiles;
-using Boma.RedeSocial.Domain.Profiles.Interfaces;
-using Boma.RedeSocial.Domain.Profiles.Entities;
-using System.Web;
 using Boma.RedeSocial.Infrastructure.Data.EntityFramework.Repositories.Users;
 using Boma.RedeSocial.Infrastructure.Data;
 using Boma.RedeSocial.Domain.Users.Services;
 
 namespace Boma.RedeSocial.AppService.Users.Services
 {
-    public class UserAppService : IUserAppService
+    public class UserAppService 
     {
         private UserRepository UserRepository { get; }
         private SexMoveContext Uow { get; set; }
@@ -113,7 +106,6 @@ namespace Boma.RedeSocial.AppService.Users.Services
 
         public void Update(Guid UserId, UpdateUserCommand command, string userName)
         {
-            // ToDo : editar o e-mail e username nas duas tabelas(Users e AspNetUsers)
             var user = UserRepository.GetById(UserId);
 
             AssertConcern.AssertArgumentNotNull(user, "Usuário inexistente");
@@ -159,20 +151,22 @@ namespace Boma.RedeSocial.AppService.Users.Services
             Uow.Commit();
         }
 
-        public string ResetPassword(ResetPasswordCommand command)
+        public void ResetPassword(ResetPasswordCommand command)
         {
             var user = UserRepository.GetByEmail(command.Email);
 
             AssertConcern.AssertArgumentNotNull(user, "Usuário não encontrado");
             AssertConcern.AssertArgumentEquals(user.PasswordResetKey, command.PasswordResetKey, "Código inválido para resetar senha");
+            AssertConcern.AssertArgumentNotNull(command.NewPassword, "A nova senha não pode estar nula");
+            AssertConcern.AssertArgumentNotEmpty(command.NewPassword, "A nova senha não pode ser vazio");
 
-            var newPassword = $"{DateTime.UtcNow:MMyy}user@#!{DateTime.UtcNow:yydd}"; 
+            var newPassword = SecurityService.Encrypt(command.NewPassword); 
 
-            var hashResetKey = SecurityService.Encrypt(newPassword);
-            user.SetPasswordResetKey(hashResetKey);
+            user.SetPasswordResetKey(newPassword);
+            user.PasswordHash = newPassword;
+
             UserRepository.Update(user);
             Uow.Commit();
-            return newPassword;
         }
 
         #endregion

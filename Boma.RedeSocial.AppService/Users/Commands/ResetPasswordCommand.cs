@@ -9,5 +9,6 @@ namespace Boma.RedeSocial.AppService.Users.Commands
 
         [Required]
         public string PasswordResetKey { get; set; }
+        public string NewPassword { get; set; }
     }
 }

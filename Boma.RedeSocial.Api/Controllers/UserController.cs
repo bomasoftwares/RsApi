@@ -41,6 +41,24 @@ namespace Boma.RedeSocial.Api.Controllers
             
             return UserAppService.Get(user.UserId);
         }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("users/forgotPassword")]
+        public void ForgotPassword(ForgotPasswordCommand command)
+        {
+            UserAppService.ForgotPassword(command);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("users/resetPassword")]
+        public void ResetPassword(ResetPasswordCommand command)
+        {
+            UserAppService.ResetPassword(command);
+        }
+
+
         #endregion
     }
 }
