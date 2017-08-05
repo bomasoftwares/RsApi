@@ -12,6 +12,7 @@ using System.Web.Http;
 
 namespace Boma.RedeSocial.Api.Controllers
 {
+    [Authorize]
     public class FileController : ApiController
     {
         public FileController()
@@ -30,6 +31,7 @@ namespace Boma.RedeSocial.Api.Controllers
         public void UploadNewFile()
         {
             var user = UserAppService.GetDomainUserByEmail(User.Identity.Name);
+            AssertConcern.AssertArgumentNotNull(user, "Usuário não encontrado");
 
             foreach (var file in this.GetPostedFiles())
             {
