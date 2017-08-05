@@ -8,8 +8,8 @@ namespace Boma.RedeSocial.Domain.Common.Interfaces
     {
         T GetById(Guid id);
         IQueryable<T> GetAll();
-        void Save(T entity);
-        void Update(T entity);
-        void Remove(T entity);
+        void Save(T entity, string createUser);
+        void Update(T entity, string updateUser);
+        void Remove(T entity, string deleteUser);
     }
 }

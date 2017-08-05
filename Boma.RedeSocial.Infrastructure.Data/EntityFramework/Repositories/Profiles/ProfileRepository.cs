@@ -5,12 +5,12 @@ using Boma.RedeSocial.Domain.Users.Interfaces;
 
 namespace Boma.RedeSocial.Infrastructure.Data.EntityFramework.Repositories.Profiles
 {
-    public class ProfileRepository: CommonRepository<Profile>, IProfileRepository
+    public class ProfileRepository //: CommonRepository<Profile>, IProfileRepository
     {
-        public ProfileRepository(ISexMoveUnitOfWork uow, ISexMoveContext context)
-            : base(uow, context)
-        {
+        //public ProfileRepository(ISexMoveUnitOfWork uow, ISexMoveContext context)
+        //    : base(uow, context)
+        //{
 
-        }
+        //}
     }
 }

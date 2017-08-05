@@ -58,6 +58,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Files\Adapters\FileAdapter.cs" />
+    <Compile Include="Files\Commands\AddFileCommand.cs" />
+    <Compile Include="Files\Commands\GetFilesCommand.cs" />
+    <Compile Include="Files\Commands\GetFileCommand.cs" />
+    <Compile Include="Files\Commands\SearchFilesCommand.cs" />
+    <Compile Include="Files\DTOs\FileDto.cs" />
+    <Compile Include="Files\FileAppService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Users\Commands\ForgotPasswordCommand.cs" />
     <Compile Include="Users\Commands\NewUserCommand.cs" />
@@ -90,6 +97,7 @@
       <Name>Boma.RedeSocial.Infrastructure.Data</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

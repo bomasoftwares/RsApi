@@ -17,6 +17,8 @@ namespace Boma.RedeSocial.Domain.Common.Entities
     public abstract class DomainEntityBase
     {
         public Guid Id { get; set; }
+
+        public void GenerateNewId() => Id = Guid.NewGuid();
     }
     
 }
