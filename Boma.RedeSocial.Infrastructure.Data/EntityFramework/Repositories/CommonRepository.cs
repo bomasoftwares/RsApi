@@ -39,8 +39,8 @@ namespace Boma.RedeSocial.Infrastructure.Data.EntityFramework.Repositories
 
         public void Remove(T entity, string deleteUser)
         {
-            entity.DeleteBy = deleteUser;
-            entity.DeletedAt = DateTime.UtcNow;
+            entity.DeleteBy = entity.UpdateBy = deleteUser;
+            entity.DeletedAt = entity.UpdatedAt = DateTime.UtcNow;
 
             Uow.Entry(entity).State = EntityState.Modified;
         }
@@ -57,6 +57,7 @@ namespace Boma.RedeSocial.Infrastructure.Data.EntityFramework.Repositories
         public void Update(T entity, string updateUser)
         {
             entity.UpdateBy = updateUser;
+            entity.UpdatedAt = DateTime.UtcNow;
             Uow.Entry(entity).State = EntityState.Modified;
         } 
 

@@ -19,7 +19,7 @@ namespace Boma.RedeSocial.Infrastructure.Data.EntityFramework.Repositories.Files
 
         public IQueryable<File> GetFilesByReferenceId(Guid referenceId)
         {
-            return Uow.Files.Where(f => f.ReferenceId == referenceId);
+            return QueryWithoutDeleted().Where(f => f.ReferenceId == referenceId);
         }
     }
 }

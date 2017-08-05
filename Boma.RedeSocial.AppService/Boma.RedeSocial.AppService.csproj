@@ -63,6 +63,7 @@
     <Compile Include="Files\Commands\GetFilesCommand.cs" />
     <Compile Include="Files\Commands\GetFileCommand.cs" />
     <Compile Include="Files\Commands\SearchFilesCommand.cs" />
+    <Compile Include="Files\Commands\UploadFileCommand.cs" />
     <Compile Include="Files\DTOs\FileDto.cs" />
     <Compile Include="Files\FileAppService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

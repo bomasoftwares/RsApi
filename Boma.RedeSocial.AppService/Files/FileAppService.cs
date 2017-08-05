@@ -33,6 +33,8 @@ namespace Boma.RedeSocial.AppService.Files
         {
             AssertConcern.AssertArgumentNotEmpty(command.FileName, "Nome do arquivo não pode ser nulo");
 
+            var fileAlreadyExist = FileRepository.GetFilesByQuery(command.FileName);
+
             var file = new File(command.FileName, command.ContentType)
             {
                 Size = command.File.Length,
@@ -50,7 +52,36 @@ namespace Boma.RedeSocial.AppService.Files
 
             Uow.Commit();
         }
+        public void Update(UpdateFileCommand command)
+        {
+            AssertConcern.AssertArgumentNotGuidEmpty(command.FileId, "Identificador do arquivo inválido");
 
+            var file = FileRepository.GetById(command.FileId);
+            AssertConcern.AssertArgumentNotNull(file, "Arquivo não encontrado");
+
+            file.Name = command.FileName;
+            file.ContentType = command.ContentType;
+            file.ReferenceId = command.ReferenceId.Value;
+            file.Size = command.File.Length;
+
+            FileRepository.Update(file, command.UpdateUser);
+            AzureContainer.AddFile(file.Id, command.File);
+
+            Uow.Commit();
+        }
+
+        public void Remove(Guid fileId, string deleteUser)
+        {
+            AssertConcern.AssertArgumentNotGuidEmpty(fileId, "Identificador do arquivo inválido");
+            AssertConcern.AssertArgumentNotEmpty(deleteUser, "Usuário inválido para remover arquivos");
+
+            var file = FileRepository.GetById(fileId);
+            AssertConcern.AssertArgumentNotNull(file, "Arquivo não encontrado");
+
+            FileRepository.Remove(file, deleteUser);
+
+            Uow.Commit();
+        }
         public FileDto DownloadFile(Guid fileId)
         {
             throw new NotImplementedException();
