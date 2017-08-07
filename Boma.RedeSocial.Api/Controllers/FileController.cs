@@ -101,10 +101,13 @@ namespace Boma.RedeSocial.Api.Controllers
         #region Photos
 
         [HttpGet]
-        [Route("files/{referenceId:guid}/photos")]
-        public IEnumerable<FileDto> GetPhotos([FromUri] Guid referenceId)
+        [Route("files/photos")]
+        public IEnumerable<FileDto> GetPhotos()
         {
-            return FileAppService.GetFiles(new GetFilesCommand() { ReferenceId = referenceId, ContentType = "image" });
+            var user = UserAppService.GetDomainUserByEmail(User.Identity.Name);
+            AssertConcern.AssertArgumentNotNull(user, "Usuário não encontrado");
+
+            return FileAppService.GetPhotos(new GetFilesCommand() { ReferenceId = user.UserId, ContentType = "image" });
         }
 
 

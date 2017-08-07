@@ -48,7 +48,7 @@ namespace Boma.RedeSocial.AppService.Files
             file.GenerateNewId();
 
             FileRepository.Save(file,command.CreateUser);
-            AzureContainer.AddFile(file.Id, command.File);
+            AzureContainer.AddFile($"{file.Id}_{file.Name}", command.File);
 
             Uow.Commit();
         }
@@ -65,7 +65,7 @@ namespace Boma.RedeSocial.AppService.Files
             file.Size = command.File.Length;
 
             FileRepository.Update(file, command.UpdateUser);
-            AzureContainer.AddFile(file.Id, command.File);
+            AzureContainer.AddFile($"{file.Id}_{file.Name}", command.File);
 
             Uow.Commit();
         }
@@ -97,8 +97,58 @@ namespace Boma.RedeSocial.AppService.Files
             if (!string.IsNullOrWhiteSpace(command.ContentType))
                 return files.Where(f => f.ContentType.Contains(command.ContentType)).Select(FileAdapter.ToFileDto).AsEnumerable();
 
-            return files.Select(FileAdapter.ToFileDto).AsEnumerable();
+            var fileDtoList = new List<FileDto>();
 
+            Parallel.ForEach(files, file =>
+            {
+                var content = AzureContainer.Download($"{file.Id}_{file.Name}");
+
+                var fileDto = new FileDto()
+                {
+                    Id = file.Id,
+                    Size = file.Size,
+                    ContentType = file.ContentType,
+                    Name = file.Name,
+                    Content = content
+                };
+
+                fileDtoList.Add(fileDto);
+            });
+
+            return fileDtoList.AsEnumerable();
+
+        }
+
+        public IEnumerable<FileDto> GetPhotos(GetFilesCommand command)
+        {
+            if (command.ReferenceId == Guid.Empty)
+                return null;
+
+            var files = 
+                FileRepository
+                .GetFilesByReferenceId(command.ReferenceId)
+                .Where(f => f.ContentType.Contains(command.ContentType))
+                .Select(FileAdapter.ToFileDto).AsEnumerable();
+
+            var fileDtoList = new List<FileDto>();
+
+            Parallel.ForEach(files, file =>
+            {
+                var content = AzureContainer.Download($"{file.Id}_{file.Name}");
+
+                var fileDto = new FileDto()
+                {
+                    Id = file.Id,
+                    Size = file.Size,
+                    ContentType = file.ContentType,
+                    Name = file.Name,
+                    Content = content
+                };
+
+                fileDtoList.Add(fileDto);
+            });
+
+            return fileDtoList.AsEnumerable();
         }
 
         public IEnumerable<FileDto> SearchFiles(SearchFilesCommand command)

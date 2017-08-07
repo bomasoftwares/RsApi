@@ -27,10 +27,16 @@ namespace Boma.RedeSocial.Infrastructure.Data.Azure
             BlobRepository = new AzureBlobRepository(Container);
         }
 
-        public void AddFile(Guid fileId, byte[] fileContent)
+        public void AddFile(string  fileName, byte[] fileContent)
         {
             Connect();
-            BlobRepository.Create(fileId.ToString(), fileContent);
+            BlobRepository.Create(fileName, fileContent);
+        }
+
+        public string Download(string blobName)
+        {
+            Connect();
+            return BlobRepository.Download(blobName);
         }
     }
 }
