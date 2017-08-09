@@ -116,10 +116,13 @@ namespace Boma.RedeSocial.Api.Controllers
         #region Videos
 
         [HttpGet]
-        [Route("files/{referenceId:guid}/videos")]
+        [Route("files/videos")]
         public IEnumerable<FileDto> GetVideos([FromUri] Guid referenceId)
         {
-            return FileAppService.GetFiles(new GetFilesCommand() { ReferenceId = referenceId, ContentType = "video" });
+            var user = UserAppService.GetDomainUserByEmail(User.Identity.Name);
+            AssertConcern.AssertArgumentNotNull(user, "Usuário não encontrado");
+
+            return FileAppService.GetFiles(new GetFilesCommand() { ReferenceId = user.UserId, ContentType = "video" });
         }
         #endregion
 
