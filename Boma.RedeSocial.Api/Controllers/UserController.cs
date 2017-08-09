@@ -3,20 +3,21 @@ using Boma.RedeSocial.AppService.Users.DTOs;
 using Boma.RedeSocial.AppService.Users.Services;
 using System;
 using System.Web.Http;
+using Boma.RedeSocial.AppService.Users.Commands.Profiles;
 
 namespace Boma.RedeSocial.Api.Controllers
 {
     [Authorize]
     public class UserController : ApiController
     {
-        private UserAppService UserAppService {get;}
+        private UserAppService UserAppService { get; }
         public UserController()
         {
             UserAppService = new UserAppService();
         }
 
 
-        #region CRUD
+        #region CRUD USERS
 
         [HttpPost]
         [AllowAnonymous]
@@ -38,7 +39,7 @@ namespace Boma.RedeSocial.Api.Controllers
         {
             var user = UserAppService.GetDomainUserByEmail(User.Identity.Name);
             if (user == null) return new UserDetailDTO();
-            
+
             return UserAppService.Get(user.UserId);
         }
 
@@ -59,6 +60,17 @@ namespace Boma.RedeSocial.Api.Controllers
         }
 
 
+        #endregion
+
+        #region CRUD PROFILE
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("users/UpdateProfile")]
+        public void UpdateProfile(UpdateProfileCommand command)
+        {
+            var user = UserAppService.GetDomainUserByEmail(User.Identity.Name);
+            UserAppService.UpdateProfile(user.UserId, command, User.Identity.Name);
+        }
         #endregion
     }
 }
