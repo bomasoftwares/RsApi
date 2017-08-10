@@ -15,6 +15,14 @@ namespace Boma.RedeSocial.AppService.Files.Adapters
             Size = f.Size
         };
 
+        public static Expression<Func<File, FileReportDto>> ToFileReportDto = f => new FileReportDto
+        {
+            Id = f.Id,
+            Name = f.Name,
+            ContentType = f.ContentType,
+            Size = f.Size
+        };
+
         public static FileDto ToFileDtoWithContent(File file, string content) => new FileDto
         {
             Id = file.Id,

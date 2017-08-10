@@ -33,7 +33,7 @@ namespace Boma.RedeSocial.Infrastructure.Data.Azure
             BlobRepository.Create(fileName, fileContent);
         }
 
-        public string Download(string blobName)
+        public string GetFileUrl(string blobName)
         {
             Connect();
             return BlobRepository.Download(blobName);

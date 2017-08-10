@@ -110,6 +110,19 @@ namespace Boma.RedeSocial.Api.Controllers
             return FileAppService.GetPhotos(new GetFilesCommand() { ReferenceId = user.UserId, ContentType = "image" });
         }
 
+        [HttpGet]
+        [Route("files/report/photos/latest")]
+        public IEnumerable<FileReportDto> GetLatestPhotosReport()
+        {
+            return FileAppService.GetLatestFilesReport(new GetLatestFilesReportCommand() {  ContentType = "image"});
+        }
+
+        [HttpGet]
+        [Route("files/report/videos/latest")]
+        public IEnumerable<FileReportDto> GetLatestVideosReport()
+        {
+            return FileAppService.GetLatestFilesReport(new GetLatestFilesReportCommand() { ContentType = "video" });
+        }
 
         #endregion
 
@@ -117,7 +130,7 @@ namespace Boma.RedeSocial.Api.Controllers
 
         [HttpGet]
         [Route("files/videos")]
-        public IEnumerable<FileDto> GetVideos([FromUri] Guid referenceId)
+        public IEnumerable<FileDto> GetVideos()
         {
             var user = UserAppService.GetDomainUserByEmail(User.Identity.Name);
             AssertConcern.AssertArgumentNotNull(user, "Usuário não encontrado");

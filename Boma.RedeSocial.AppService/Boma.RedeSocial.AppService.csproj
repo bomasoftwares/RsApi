@@ -62,9 +62,11 @@
     <Compile Include="Files\Commands\AddFileCommand.cs" />
     <Compile Include="Files\Commands\GetFilesCommand.cs" />
     <Compile Include="Files\Commands\GetFileCommand.cs" />
+    <Compile Include="Files\Commands\GetLatestFilesReportCommand.cs" />
     <Compile Include="Files\Commands\SearchFilesCommand.cs" />
     <Compile Include="Files\Commands\UploadFileCommand.cs" />
     <Compile Include="Files\DTOs\FileDto.cs" />
+    <Compile Include="Files\DTOs\FileReportDto.cs" />
     <Compile Include="Files\FileAppService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Users\Commands\ForgotPasswordCommand.cs" />

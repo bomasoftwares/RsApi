@@ -101,7 +101,7 @@ namespace Boma.RedeSocial.AppService.Files
 
             Parallel.ForEach(files, file =>
             {
-                var content = AzureContainer.Download($"{file.Id}_{file.Name}");
+                var url = AzureContainer.GetFileUrl($"{file.Id}_{file.Name}");
 
                 var fileDto = new FileDto()
                 {
@@ -109,7 +109,7 @@ namespace Boma.RedeSocial.AppService.Files
                     Size = file.Size,
                     ContentType = file.ContentType,
                     Name = file.Name,
-                    Content = content
+                    Content = url
                 };
 
                 fileDtoList.Add(fileDto);
@@ -134,7 +134,7 @@ namespace Boma.RedeSocial.AppService.Files
 
             Parallel.ForEach(files, file =>
             {
-                var content = AzureContainer.Download($"{file.Id}_{file.Name}");
+                var content = AzureContainer.GetFileUrl($"{file.Id}_{file.Name}");
 
                 var fileDto = new FileDto()
                 {
@@ -158,6 +158,25 @@ namespace Boma.RedeSocial.AppService.Files
 
             return FileRepository.GetFilesByQuery(command.Query).Select(FileAdapter.ToFileDto).AsEnumerable();
         }
+        
+        public IEnumerable<FileReportDto> GetLatestFilesReport(GetLatestFilesReportCommand command)
+        {
+            var files = FileRepository
+                        .GetLatestFilesReport(command.ContentType)
+                        .Select(FileAdapter.ToFileReportDto);
+            List<FileReportDto> report = new List<FileReportDto>();
+
+            foreach (var item in files)
+            {
+                var content = AzureContainer.GetFileUrl($"{item.Id}_{item.Name}");
+                item.Url = content;
+                report.Add(item);
+            }
+
+            return report;
+             
+        }
+           
         
     }
 }
