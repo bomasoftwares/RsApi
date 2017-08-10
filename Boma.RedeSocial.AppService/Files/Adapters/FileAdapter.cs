@@ -20,7 +20,8 @@ namespace Boma.RedeSocial.AppService.Files.Adapters
             Id = f.Id,
             Name = f.Name,
             ContentType = f.ContentType,
-            Size = f.Size
+            Size = f.Size,
+            CreatedAt = f.CreatedAt.ToShortDateString()
         };
 
         public static FileDto ToFileDtoWithContent(File file, string content) => new FileDto
