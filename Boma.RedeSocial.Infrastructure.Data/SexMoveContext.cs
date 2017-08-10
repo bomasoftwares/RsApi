@@ -5,6 +5,8 @@ using Boma.RedeSocial.Infrastructure.Data.EntityFramework.DbMap.Users;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System;
 using System.Data.Entity;
+using Boma.RedeSocial.Domain.Profiles.Entities;
+using Boma.RedeSocial.Infrastructure.Data.EntityFramework.DbMap.Profiles;
 
 namespace Boma.RedeSocial.Infrastructure.Data
 {
@@ -25,6 +27,7 @@ namespace Boma.RedeSocial.Infrastructure.Data
         {
             modelBuilder.Configurations.Add(new UserDbMap());
             modelBuilder.Configurations.Add(new FileDbMap());
+            modelBuilder.Configurations.Add(new ProfileDbMap());
 
             base.OnModelCreating(modelBuilder);
         }
@@ -36,9 +39,9 @@ namespace Boma.RedeSocial.Infrastructure.Data
         
         public DbSet<User> AppUsers { get; set; }
         public DbSet<File> Files { get; set; }
-
+        public DbSet<Profile> UserProfile { get; set; }
         #endregion
 
-        
+
     }
 }

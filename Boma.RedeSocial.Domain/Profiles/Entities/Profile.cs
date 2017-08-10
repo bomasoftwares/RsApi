@@ -12,17 +12,25 @@ namespace Boma.RedeSocial.Domain.Profiles.Entities
 
         public string Summary { get; set; }
 
+        public string Resume { get; set; }
+
         public TypePerson Genre { get; set; }
 
         public MaritalStatus MaritalStatus { get; set; }
 
-        public Guid UserId { get; set; }
+        public MaritalStatus MaritalInterest { get; set; }
+
+        public string StateInterest { get; set; } //Todo: Damasio,change this property to one class with states previosly saved in database
+
+        public string CityInterest { get; set; }
+
+        public string UserId { get; set; }
 
         public ProfilePeopleConfiguration PeopleOneConfiguration { get; set; }
 
         public ProfilePeopleConfiguration PeopleTwoConfiguration { get; set; }
 
-        public virtual User User  {get;set;}
+        public virtual User User { get; set; }
 
         protected Profile()
         {
@@ -31,7 +39,7 @@ namespace Boma.RedeSocial.Domain.Profiles.Entities
 
         public Profile(Guid userId)
         {
-            UserId = userId;
+          //  UserId = userId;
         }
 
     }

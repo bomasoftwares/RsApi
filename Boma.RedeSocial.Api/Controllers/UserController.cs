@@ -65,7 +65,7 @@ namespace Boma.RedeSocial.Api.Controllers
         #region CRUD PROFILE
         [HttpPost]
         [AllowAnonymous]
-        [Route("users/UpdateProfile")]
+        [Route("users/updateProfile")]
         public void UpdateProfile(UpdateProfileCommand command)
         {
             var user = UserAppService.GetDomainUserByEmail(User.Identity.Name);
