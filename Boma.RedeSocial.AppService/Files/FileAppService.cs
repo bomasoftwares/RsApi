@@ -163,17 +163,16 @@ namespace Boma.RedeSocial.AppService.Files
         {
             var files = FileRepository
                         .GetLatestFilesReport(command.ContentType)
-                        .Select(FileAdapter.ToFileReportDto);
+                        .Select(FileAdapter.ToFileReportDto).ToArray();
             List<FileReportDto> report = new List<FileReportDto>();
 
-            foreach (var item in files)
+            Parallel.ForEach(files, (file, state, index) =>
             {
-                var content = AzureContainer.GetFileUrl($"{item.Id}_{item.Name}");
-                item.Url = content;
-                report.Add(item);
-            }
+                var content = AzureContainer.GetFileUrl($"{files[index].Id}_{files[index].Name}");
+                files[index].Url = content;
+            });
 
-            return report;
+            return files.Take(10);
              
         }
            
