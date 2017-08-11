@@ -17,7 +17,7 @@ namespace Boma.RedeSocial.Api.Controllers
         }
 
 
-        #region CRUD USERS
+        #region Users
 
         [HttpPost]
         [AllowAnonymous]
@@ -62,9 +62,8 @@ namespace Boma.RedeSocial.Api.Controllers
 
         #endregion
 
-        #region CRUD PROFILE
-        [HttpPost]
-        [AllowAnonymous]
+        #region Profiles
+        [HttpPut]
         [Route("users/updateProfile")]
         public void UpdateProfile(UpdateProfileCommand command)
         {

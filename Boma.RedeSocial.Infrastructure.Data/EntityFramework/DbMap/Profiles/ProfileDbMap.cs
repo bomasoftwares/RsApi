@@ -11,6 +11,8 @@ namespace Boma.RedeSocial.Infrastructure.Data.EntityFramework.DbMap.Profiles
         {
             HasKey(u => u.Id);
             HasRequired(u => u.User).WithMany().HasForeignKey(t => t.UserId);
+            Property(u => u.UserId).IsRequired();
+
             Property(u => u.UserId)
                 .HasColumnName("UserId")
                 .IsRequired()

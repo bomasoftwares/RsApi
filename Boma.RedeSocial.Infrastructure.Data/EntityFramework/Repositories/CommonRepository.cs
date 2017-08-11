@@ -17,9 +17,9 @@ namespace Boma.RedeSocial.Infrastructure.Data.EntityFramework.Repositories
         protected SexMoveContext Uow { get; set; }
         protected IDbConnection Dapper { get; set; }
 
-        public CommonRepository()
+        public CommonRepository(SexMoveContext uow)
         {
-            Uow = new SexMoveContext();
+            Uow = uow;
             Dapper = Uow.Database.Connection;
         }
 
@@ -51,8 +51,6 @@ namespace Boma.RedeSocial.Infrastructure.Data.EntityFramework.Repositories
             entity.UpdatedAt =  entity.CreatedAt = DateTime.UtcNow;
             
             CurrentSet().Add(entity);
-            Uow.SaveChanges();
-            
         }
         public void Update(T entity, string updateUser)
         {

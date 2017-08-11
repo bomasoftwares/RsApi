@@ -7,16 +7,25 @@ using Boma.RedeSocial.Domain.Common.Enums;
 using Boma.RedeSocial.Crosscut.Services;
 using System.Text;
 using Boma.RedeSocial.AppService.Users.Commands.Profiles;
-using Boma.RedeSocial.AppService.Users.DTOs.Profiles;
 using Boma.RedeSocial.Infrastructure.Data.EntityFramework.Repositories.Users;
 using Boma.RedeSocial.Infrastructure.Data;
 using Boma.RedeSocial.Domain.Users.Services;
+using Boma.RedeSocial.Infrastructure.Data.EntityFramework.Repositories.Profiles;
+using Boma.RedeSocial.Infrastructure.Data.EntityFramework.Repositories.Configurations;
+using System.Threading.Tasks;
+using Boma.RedeSocial.AppService.Users.Profiles.DTOs;
+using Boma.RedeSocial.Domain.Profiles.Entities;
+using Boma.RedeSocial.Domain.Configurations;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Boma.RedeSocial.AppService.Users.Services
 {
     public class UserAppService 
     {
         private UserRepository UserRepository { get; }
+        private ProfileRepository ProfileRepository { get; }
+        private ConfigurationRepository ConfigurationRepository { get; }
         private SexMoveContext Uow { get; set; }
         private UserService UserService { get; set; }
 
@@ -25,6 +34,8 @@ namespace Boma.RedeSocial.AppService.Users.Services
             Uow = new SexMoveContext();
             UserRepository = new UserRepository(Uow);
             UserService = new UserService();
+            ProfileRepository = new ProfileRepository(Uow);
+            ConfigurationRepository = new ConfigurationRepository(Uow);
         }
 
         #region Authenticate
@@ -173,122 +184,91 @@ namespace Boma.RedeSocial.AppService.Users.Services
 
         #region Serviços de perfil de usuários
 
-        public UserProfileDto GetUserProfile(Guid userId)
+        public ProfileDto GetUserProfile(Guid userId)
         {
-            return new UserProfileDto()
+            var profile = ProfileRepository.GetById(userId);
+            AssertConcern.AssertArgumentNotNull(profile.UserId, "Usuário não encontrado");
+
+            var returnProfile = new ProfileDto()
             {
-                Id = userId,
-                Genre = 0,
-                GenreDescription = "Man",
-                MaritalStatus = 0,
-                MaritalStatusDescription = "Single",
-                ZipCode = "23070400",
-                PeopleOne = new PeopleProfileDto()
-                {
-                    BirthDate = DateTime.Now,
-                    Name = "Batman",
-                    EyesColor = 0,
-                    EyesColorDescription = "Black",
-                    HairColor = 1,
-                    HairColorDescription = "Black",
-                    Height = 183,
-                    Weight = 80,
-                    ASmoker = false,
-                    ADrinker = true
-                },
-                Summary = @" Uma pessoa que gosta de se aventurar na vida"
+                Id = profile.Id,
+                Genre = (int)profile.Genre,
+                GenreDescription = profile.Genre.ToString(),
+                MaritalStatus = (int)profile.MaritalStatus,
+                MaritalStatusDescription = profile.MaritalStatus.ToString(),
+                ZipCode = profile.ZipCode,
+                MaritalStatusInterest = (int)profile.MaritalStatusInterest,
+                MaritalStatusInterestDescription = profile.MaritalStatusInterest.ToString(),
+                Summary = profile.Summary
             };
-        }
 
-        public Guid InsertProfile(NewProfileCommand command)
-        {
-            return Guid.Empty;
+            var interestConfigurations = ConfigurationRepository.GetByQuery(profile.UserId,"Interest");
+            var relationshipConfigurations = ConfigurationRepository.GetByQuery(profile.UserId, "Relationship");
 
-            //try
-            //{
-                //var existProfile = ProfileRepository.GetById(command.UserId);
-                //AssertConcern.AssertArgumentTrue(existProfile == null, "Usuário já possui um perfil");
+            Parallel.ForEach(interestConfigurations, x => returnProfile.Interests.Add(x));
+            Parallel.ForEach(relationshipConfigurations, x => returnProfile.Relationships.Add(x));
 
-                //var profile = new Profile(command.UserId);
-                //profile.Id = Guid.NewGuid();
-                //profile.Genre = (TypePerson)command.Genre;
-                //profile.MaritalStatus = (MaritalStatus)command.MaritalStatus;
-                //profile.Summary = command.Summary;
-                //profile.ZipCode = command.ZipCode;
+            return returnProfile;
 
-                //if (command.PeopleOne != null)
-                //{
-                //    profile.PeopleOneConfiguration = new ProfilePeopleConfiguration()
-                //    {
-                //        Id = Guid.NewGuid(),
-                //        ADrinker = command.PeopleOne.ADrinker,
-                //        ASmoker = command.PeopleOne.ASmoker,
-                //        BirthDate = command.PeopleOne.BirthDate,
-                //        EyeColor = (EyeColor)command.PeopleOne.EyeColor,
-                //        HairColor = (HairColor)command.PeopleOne.HairColor,
-                //        Height = command.PeopleOne.Height,
-                //        Name = command.PeopleOne.Name,
-                //        Weight = command.PeopleOne.Weight,
-                //        ProfileId = profile.Id
-                //    };
-                //    ProfilePeopleConfigurationRepository.Save(profile.PeopleOneConfiguration);
-                //}
-
-
-                //if (command.PeopleTwo != null)
-                //{
-                //    profile.PeopleTwoConfiguration = new ProfilePeopleConfiguration()
-                //    {
-                //        Id = Guid.NewGuid(),
-                //        ADrinker = command.PeopleTwo.ADrinker,
-                //        ASmoker = command.PeopleTwo.ASmoker,
-                //        BirthDate = command.PeopleTwo.BirthDate,
-                //        EyeColor = (EyeColor)command.PeopleTwo.EyeColor,
-                //        HairColor = (HairColor)command.PeopleTwo.HairColor,
-                //        Height = command.PeopleTwo.Height,
-                //        Name = command.PeopleTwo.Name,
-                //        Weight = command.PeopleTwo.Weight,
-                //        ProfileId = profile.Id,
-
-                //    };
-                //    ProfilePeopleConfigurationRepository.Save(profile.PeopleTwoConfiguration);
-                //}
-
-                //ProfileRepository.Save(profile);
-
-                //Uow.Commit();
-                // SexMoveAuditing.Audit(new AuditCreateCommand("Perfil criado", new { Profile = profile}));
-                // SexMoveAuditing.Audit(new AuditCreateCommand("Configuração de perfil criada", new { ProfilePeopleConfiguration = profile.PeopleOneConfiguration }));
-                // SexMoveAuditing.Audit(new AuditCreateCommand("Configuração de perfil criada", new { ProfilePeopleConfiguration = profile.PeopleTwoConfiguration }));
-
-
-                //return profile.Id;
-
-            //}
-            //catch (Exception)
-            //{
-            //    // SexMoveAuditing.AuditError(new AuditErrorCommand(ex.Message, ex));
-            //    throw;
-            //}
 
         }
-
         public void UpdateProfile(Guid UserId, UpdateProfileCommand command, string userName)
         {
-            var profile = UserRepository.GetById(UserId);
+            AssertConcern.AssertArgumentNotGuidEmpty(UserId, "Usuário inválido");
 
-            AssertConcern.AssertArgumentNotNull(profile, "Usuário inexistente");
-            AssertConcern.AssertArgumentTrue(profile.Id == UserId.ToString(), "Usuário inválido para atualização");
-
-            if (command.AccountType != -1)
+            var profile = ProfileRepository.GetById(UserId);
+            if (profile == null)
             {
-                AssertConcern.AssertArgumentEnumRange((int)command.AccountType, (int)AccountType.Normal, (int)AccountType.Companion, "Opção de conta inválida");
-                profile.AccountType = (AccountType)command.AccountType.Value;
-            }
+                var genre = (TypePerson)command.Genre;
+                var newProfile = new Profile(UserId.ToString(), genre);
+                newProfile.GenerateNewId();
+                newProfile.Genre = genre;
+                newProfile.MaritalStatus = (MaritalStatus)command.MaritalStatus;
+                newProfile.ZipCode = command.ZipCode;
+                newProfile.MaritalStatusInterest = (MaritalStatus)command.MaritalStatusInterest;
+                newProfile.Summary = command.Summary;
 
-            profile.UpdateBy = userName;
-            profile.UpdatedAt = DateTime.UtcNow;
-            UserRepository.Update(profile);
+                //var interests = JsonConvert.DeserializeObject<List<Configuration>>(command.Interests);
+                //var relationships = JsonConvert.DeserializeObject<List<Configuration>>(command.Relationships);
+                ProfileRepository.Save(newProfile, userName);
+
+                Parallel.ForEach(command.Interests, x =>
+                {
+                    var configuration = ConfigurationRepository.Get(x.UserId, x.Key);
+                    if (configuration == null)
+                        ConfigurationRepository.Create(x);
+                    else
+                    {
+                        configuration.Value = x.Value;
+                        ConfigurationRepository.Update(configuration);
+                    }
+                });
+
+                //Parallel.ForEach(relat, x =>
+                //{
+                //    var configuration = ConfigurationRepository.Get(x.UserId, x.Key);
+                //    if (configuration == null)
+                //        ConfigurationRepository.Create(x);
+                //    else
+                //    {
+                //        configuration.Value = x.Value;
+                //        ConfigurationRepository.Update(configuration);
+                //    }
+                //});
+
+            }
+            else
+            {
+                AssertConcern.AssertArgumentNotNull(profile, "Perfil não encontrado");
+                AssertConcern.AssertArgumentNotNull(profile.UserId, "Usuário não encontrado");
+                profile.Genre = (TypePerson)command.Genre;
+                profile.MaritalStatus = (MaritalStatus)command.MaritalStatus;
+                profile.ZipCode = profile.ZipCode;
+                profile.MaritalStatusInterest = (MaritalStatus)command.MaritalStatusInterest;
+                profile.Summary = profile.Summary;
+                ProfileRepository.Update(profile, userName);
+            }
+            
             Uow.Commit();
         }
 

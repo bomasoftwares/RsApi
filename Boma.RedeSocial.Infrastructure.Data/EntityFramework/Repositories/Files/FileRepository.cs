@@ -4,15 +4,15 @@ using Boma.RedeSocial.Domain.Files.Entities;
 using Boma.RedeSocial.Domain.Files.Interfaces;
 using Dapper;
 using System.Text;
-using System.Collections.Generic;
 
 namespace Boma.RedeSocial.Infrastructure.Data.EntityFramework.Repositories.Files
 {
     public class FileRepository: CommonRepository<File>, IFileRepository
     {
         public FileRepository(SexMoveContext uow)
+            :base(uow)
         {
-            Uow = uow;
+          
         }
 
         public IQueryable<File> GetFilesByQuery(string query)

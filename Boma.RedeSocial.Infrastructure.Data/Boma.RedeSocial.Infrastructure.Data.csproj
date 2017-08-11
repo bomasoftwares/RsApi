@@ -96,15 +96,19 @@
   <ItemGroup>
     <Compile Include="Azure\AzureContainer.cs" />
     <Compile Include="Azure\Blobs\AzureBlobRepository.cs" />
+    <Compile Include="EntityFramework\DbMap\Configurations\ConfigurationDbMap.cs" />
     <Compile Include="EntityFramework\DbMap\Files\FileDbMap.cs" />
     <Compile Include="EntityFramework\DbMap\Profiles\ProfileDbMap.cs" />
-    <Compile Include="EntityFramework\DbMap\Profiles\ProfilePeopleConfigurationDbMap.cs" />
     <Compile Include="EntityFramework\DbMap\Users\UserDbMap.cs" />
     <Compile Include="EntityFramework\Repositories\CommonRepository.cs" />
+    <Compile Include="EntityFramework\Repositories\Configurations\ConfigurationRepository.cs" />
     <Compile Include="EntityFramework\Repositories\Files\FileRepository.cs" />
-    <Compile Include="EntityFramework\Repositories\Profiles\ProfilePeopleConfigurationRepository.cs" />
     <Compile Include="EntityFramework\Repositories\Profiles\ProfileRepository.cs" />
     <Compile Include="EntityFramework\Repositories\Users\UserRepository.cs" />
+    <Compile Include="Migrations\201708110248556_TAbleConfiguration.cs" />
+    <Compile Include="Migrations\201708110248556_TAbleConfiguration.Designer.cs">
+      <DependentUpon>201708110248556_TAbleConfiguration.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\ApplicationConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SexMoveContext.cs" />
@@ -125,6 +129,11 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Azure\Tables\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201708110248556_TAbleConfiguration.resx">
+      <DependentUpon>201708110248556_TAbleConfiguration.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
