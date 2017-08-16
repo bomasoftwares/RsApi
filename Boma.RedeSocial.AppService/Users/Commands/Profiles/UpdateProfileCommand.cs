@@ -15,6 +15,6 @@ namespace Boma.RedeSocial.AppService.Users.Commands.Profiles
         public int AccountType { get; set; }
         
         public List<Configuration> Interests { get; set; }
-        public string Relationships { get; set; }
+        public List<Configuration> Relationships { get; set; }
     }
 }

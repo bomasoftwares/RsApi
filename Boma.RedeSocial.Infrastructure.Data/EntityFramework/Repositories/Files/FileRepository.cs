@@ -15,6 +15,7 @@ namespace Boma.RedeSocial.Infrastructure.Data.EntityFramework.Repositories.Files
           
         }
 
+
         public IQueryable<File> GetFilesByQuery(string query)
         {
             return QueryWithoutDeleted().Where(f => f.Name.Contains(query));

@@ -18,6 +18,7 @@ using Boma.RedeSocial.Domain.Profiles.Entities;
 using Boma.RedeSocial.Domain.Configurations;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace Boma.RedeSocial.AppService.Users.Services
 {
@@ -186,7 +187,8 @@ namespace Boma.RedeSocial.AppService.Users.Services
 
         public ProfileDto GetUserProfile(Guid userId)
         {
-            var profile = ProfileRepository.GetById(userId);
+            AssertConcern.AssertArgumentNotGuidEmpty(userId, "Id do usuário inválido");
+            var profile = ProfileRepository.GetByUserId(userId.ToString());
             AssertConcern.AssertArgumentNotNull(profile.UserId, "Usuário não encontrado");
 
             var returnProfile = new ProfileDto()
@@ -199,14 +201,19 @@ namespace Boma.RedeSocial.AppService.Users.Services
                 ZipCode = profile.ZipCode,
                 MaritalStatusInterest = (int)profile.MaritalStatusInterest,
                 MaritalStatusInterestDescription = profile.MaritalStatusInterest.ToString(),
-                Summary = profile.Summary
+                Summary = profile.Summary,
+                Interests = new List<Configuration>(),
+                Relationships = new List<Configuration>()
             };
 
             var interestConfigurations = ConfigurationRepository.GetByQuery(profile.UserId,"Interest");
             var relationshipConfigurations = ConfigurationRepository.GetByQuery(profile.UserId, "Relationship");
 
-            Parallel.ForEach(interestConfigurations, x => returnProfile.Interests.Add(x));
-            Parallel.ForEach(relationshipConfigurations, x => returnProfile.Relationships.Add(x));
+            if (interestConfigurations.Any())
+                Parallel.ForEach(interestConfigurations, x => returnProfile.Interests.Add(x));
+
+            if (relationshipConfigurations.Any())
+                Parallel.ForEach(relationshipConfigurations, x => returnProfile.Relationships.Add(x));
 
             return returnProfile;
 
@@ -216,7 +223,7 @@ namespace Boma.RedeSocial.AppService.Users.Services
         {
             AssertConcern.AssertArgumentNotGuidEmpty(UserId, "Usuário inválido");
 
-            var profile = ProfileRepository.GetById(UserId);
+            var profile = ProfileRepository.GetByUserId(UserId.ToString());
             if (profile == null)
             {
                 var genre = (TypePerson)command.Genre;
@@ -228,34 +235,7 @@ namespace Boma.RedeSocial.AppService.Users.Services
                 newProfile.MaritalStatusInterest = (MaritalStatus)command.MaritalStatusInterest;
                 newProfile.Summary = command.Summary;
 
-                //var interests = JsonConvert.DeserializeObject<List<Configuration>>(command.Interests);
-                //var relationships = JsonConvert.DeserializeObject<List<Configuration>>(command.Relationships);
                 ProfileRepository.Save(newProfile, userName);
-
-                Parallel.ForEach(command.Interests, x =>
-                {
-                    var configuration = ConfigurationRepository.Get(x.UserId, x.Key);
-                    if (configuration == null)
-                        ConfigurationRepository.Create(x);
-                    else
-                    {
-                        configuration.Value = x.Value;
-                        ConfigurationRepository.Update(configuration);
-                    }
-                });
-
-                //Parallel.ForEach(relat, x =>
-                //{
-                //    var configuration = ConfigurationRepository.Get(x.UserId, x.Key);
-                //    if (configuration == null)
-                //        ConfigurationRepository.Create(x);
-                //    else
-                //    {
-                //        configuration.Value = x.Value;
-                //        ConfigurationRepository.Update(configuration);
-                //    }
-                //});
-
             }
             else
             {
@@ -268,7 +248,37 @@ namespace Boma.RedeSocial.AppService.Users.Services
                 profile.Summary = profile.Summary;
                 ProfileRepository.Update(profile, userName);
             }
-            
+
+            if (command.Interests != null && command.Interests.Count > 0)
+            {
+                foreach (var item in command.Interests)
+                {
+                    var configuration = ConfigurationRepository.Get(item.UserId, item.Key);
+                    if (configuration == null)
+                        ConfigurationRepository.Create(item);
+                    else
+                    {
+                        configuration.Value = item.Value;
+                        ConfigurationRepository.Update(configuration);
+                    }
+                }
+            }
+
+            if (command.Relationships != null && command.Relationships.Count > 0)
+            {
+                foreach (var item in command.Relationships)
+                {
+                    var configuration = ConfigurationRepository.Get(item.UserId, item.Key);
+                    if (configuration == null)
+                        ConfigurationRepository.Create(item);
+                    else
+                    {
+                        configuration.Value = item.Value;
+                        ConfigurationRepository.Update(configuration);
+                    }
+                }
+            }
+
             Uow.Commit();
         }
 

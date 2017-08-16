@@ -7,8 +7,7 @@ namespace Boma.RedeSocial.Infrastructure.Data.EntityFramework.DbMap.Configuratio
     {
         public ConfigurationDbMap()
         {
-            HasKey(f => f.UserId);
-
+            HasKey(f => new { f.UserId, f.Key });
             Property(u => u.UserId).IsRequired();
             Property(p => p.Key);
             Property(p => p.Value);

@@ -4,8 +4,15 @@ using System;
 
 namespace Boma.RedeSocial.Domain.Configurations
 {
+    
     public class Configuration
     {
+        [Obsolete("EF Hidratated", true)]
+        public Configuration()
+        {
+
+        }
+
         public Configuration(string userId, string key, string value)
         {
             UserId = userId;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Boma.RedeSocial.AppService.Users.Profiles.DTOs;
+using System;
 
 namespace Boma.RedeSocial.AppService.Users.DTOs
 {
@@ -10,5 +11,6 @@ namespace Boma.RedeSocial.AppService.Users.DTOs
         public string UrlProfilePhoto { get; set; }
         public int AccountType { get; set; }
         public string AccountTypeDescription { get; set; }
+        
     }
 }
