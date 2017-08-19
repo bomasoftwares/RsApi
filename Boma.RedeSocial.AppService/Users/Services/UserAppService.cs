@@ -194,6 +194,7 @@ namespace Boma.RedeSocial.AppService.Users.Services
             var returnProfile = new ProfileDto()
             {
                 Id = profile.Id,
+                UserId = profile.UserId,
                 Genre = (int)profile.Genre,
                 GenreDescription = profile.Genre.ToString(),
                 MaritalStatus = (int)profile.MaritalStatus,
@@ -245,7 +246,7 @@ namespace Boma.RedeSocial.AppService.Users.Services
                 profile.MaritalStatus = (MaritalStatus)command.MaritalStatus;
                 profile.ZipCode = profile.ZipCode;
                 profile.MaritalStatusInterest = (MaritalStatus)command.MaritalStatusInterest;
-                profile.Summary = profile.Summary;
+                profile.Summary = command.Summary;
                 ProfileRepository.Update(profile, userName);
             }
 

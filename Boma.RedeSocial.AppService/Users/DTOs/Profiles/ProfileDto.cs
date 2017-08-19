@@ -7,6 +7,7 @@ namespace Boma.RedeSocial.AppService.Users.Profiles.DTOs
     public class ProfileDto
     {
         public Guid Id { get; set; }
+        public string UserId { get; set; }
         public string ZipCode { get; set; }
         public string Summary { get; set; }
         public int? Genre { get; set; }
