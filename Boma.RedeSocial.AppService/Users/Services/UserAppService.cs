@@ -251,12 +251,13 @@ namespace Boma.RedeSocial.AppService.Users.Services
             }
 
             if (command.Interests != null && command.Interests.Count > 0)
-            {
+            {    
                 foreach (var item in command.Interests)
                 {
                     var configuration = ConfigurationRepository.Get(item.UserId, item.Key);
                     if (configuration == null)
                         ConfigurationRepository.Create(item);
+
                     else
                     {
                         configuration.Value = item.Value;
