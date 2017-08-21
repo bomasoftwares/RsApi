@@ -189,7 +189,13 @@ namespace Boma.RedeSocial.AppService.Users.Services
         {
             AssertConcern.AssertArgumentNotGuidEmpty(userId, "Id do usuário inválido");
             var profile = ProfileRepository.GetByUserId(userId.ToString());
-            AssertConcern.AssertArgumentNotNull(profile.UserId, "Usuário não encontrado");
+            if (profile == null)
+            {
+                return new ProfileDto()
+                {
+                    UserId = userId.ToString()
+                };
+            }
 
             var returnProfile = new ProfileDto()
             {
